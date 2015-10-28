@@ -321,10 +321,6 @@ curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
       "type": "versal/text",
       "id": "123"
     }]
-  }],
-  "authors": [{ 
-    "id": "123",
-    "fn": "RJ Zaworski"
   }]
 }
 ```
@@ -368,13 +364,6 @@ curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
 * `id` — `String` the lesson ID
 * `title` — `String` the lesson title
 * `gadgets` — `Array[Object]` a list of gadgets in the lesson describing the gadget as `{ type, id }</tt></td>
-</tr>
-<tr>
-  <td><tt>authors</tt></td>
-  <td><tt>Array[Object]</tt></td>
-  <td>An array of objects representing all authors of the course. Each author includes:
-* `id` — String` the author’s user ID
-* `fn` — String` the author’s full name</td>
 </tr>
 </tbody>
 </table>
