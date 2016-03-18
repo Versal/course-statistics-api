@@ -368,6 +368,54 @@ curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
 </tbody>
 </table>
 
+## Track Learner Course Activity
+
+Tracking a learner on a course makes that learner's course progress visible.
+
+### Sample Request
+
+```bash
+curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
+  -XPATCH \
+  -d '{"tracked":true}' \
+  https://stack.versal.com/api2/courses/1234/users/1234
+```
+
+### Sample Response
+
+```javascript
+{
+  "user": {
+    "email": "rj@versal.com",
+    "firstname": "RJ",
+    "lastname": "Zaworski",
+    "id": "1234",
+    "fullname": "RJ Zaworski",
+    },
+  "tracked": true
+}
+```
+
+<table width="250.0%" cellspacing="0" cellpadding="0" class="t1">
+    <tbody>
+        <tr>
+            <th>Field Name</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td><tt>user</tt></td>
+            <td><tt>User data</tt></td>
+            <td>User record for this course learner</td>
+        </tr>
+        <tr>
+            <td><tt>tracked</tt></td>
+            <td><tt>Boolean</tt></td>
+            <td>Whether the user is tracked for the course</td>
+        </tr>
+    </tbody>
+</table>
+
 ## Learner Progress
 
 Learner progress requests retrieve a summary of the progress of all users
