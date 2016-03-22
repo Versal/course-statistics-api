@@ -24,6 +24,15 @@ body of the header is a JSON object containing pagination information:
 
 `X-Pagination: {"count":3737,"page":1,"nextPage":2,"perPage":20,"pageCount":187}`
 
+Subsequent pages from the collection endpoint may be retrieved by setting the
+`page` query parameter:
+
+```bash
+curl https://stack.versal.com/api2/courses/123/userdata?page=2 \
+  -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9'
+```
+
+
 ## User Creation
 
 New users may be created within an organization by e-mail address.
