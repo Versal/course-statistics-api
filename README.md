@@ -8,6 +8,30 @@ Platform](https://versal.com).
 
 **Version**: 0.7.0
 
+## Contents
+
+  - [Overview](#overview)
+  - [Contents](#contents)
+  - [Concepts](#concepts)
+    - [API keys](#api-keys)
+    - [User Sessions](#user-sessions)
+    - [Versal Course Player](#versal-course-player)
+  - [Topics](#topics)
+    - [Requests](#requests)
+    - [Authentication](#authentication)
+    - [Pagination](#pagination)
+  - [Reference](#reference)
+    - [User Creation](#user-creation)
+    - [Session Creation](#session-creation)
+    - [User Retrieval](#user-retrieval)
+    - [User Updates](#user-updates)
+    - [Course Listing](#course-listing)
+    - [Course Retrieval](#course-retrieval)
+    - [Course User Tracking](#course-user-tracking)
+    - [Learner Progress Retrieval](#learner-progress-retrieval)
+    - [Gadget Configuration Retrieval](#gadget-configuration-retrieval)
+    - [Gadget User Data Retrieval](#gadget-user-data-retrieval)
+
 ## Concepts
 
 ### API keys
