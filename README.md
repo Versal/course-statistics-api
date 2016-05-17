@@ -1,15 +1,55 @@
+# Versal Course Statistics API
+
 ## Overview
 
-All requests and responses from the Versal API should be made over https to
-`stack.versal.com/api2`.
+The Versal Course Statistics API enables organizations to manage learners,
+courses, and performance metrics from applications built on top of the [Versal
+Platform](https://versal.com).
 
-**Version**: 0.6.6
+**Version**: 0.7.0
+
+## Concepts
+
+### API keys
+
+API keys grant broad access to organization data on Versal. Among other
+operations, they can be used to:
+
+  - create and modify organization users
+  - create sessions for organization users
+  - retrieve organizational courses
+  - retrieve learner metrics
+
+If your existing organization has not received an API key, please [contact
+Versal support][versal-support] and we will issue one. If you have not yet
+registered with Versal, [sign up for a free trial][versal-business] to receive
+your API key.
+
+### User Sessions
+
+User sessions grant a _single user_ restricted access to organization resources.
+They can be used to retrieve, launch, and consume content using the Versal
+Course Player.
+
+### Versal Course Player
+
+The Versal Course Player is a browser-based runtime for Versal course content.
+An overview of its usage and API is available [here][player-embedding].
+
+## Topics
+
+### Requests
+
+All requests and responses reference the Versal Course Statistics API available
+at: `https://stack.versal.com/api2`. Requests _must_ be made over HTTPS;
+requests over standard HTTP will be redirected to the corresponding HTTPS
+endpoint.
 
 ### Authentication
 
-All requests to the Versal API must be authenticated by setting the SID header
-to the unique session ID provided by Versal. If you are an org admin and don't
-have one of these `SID`s, please contact Versal and we will provide you one.
+All requests to the Versal API must include an SID header with a valid API key
+_or_ user session ID. If your organization has not received an API key, please
+[contact Versal support][versal-support] and we will issue one.
 
 ```bash
 curl https://stack.versal.com/api2/courses/123 \
@@ -32,12 +72,13 @@ curl https://stack.versal.com/api2/courses/123/userdata?page=2 \
   -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9'
 ```
 
+## Reference
 
-## User Creation
+### User Creation
 
 New users may be created within an organization by e-mail address.
 
-### Sample Request
+#### Sample Request
 
 ```bash
 curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
@@ -46,7 +87,7 @@ curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
   https://stack.versal.com/api2/orgs/:orgId/users
 ```
 
-### Sample Response
+#### Sample Response
 
 ```javascript
 {
@@ -100,11 +141,11 @@ curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
 </tbody>
 </table>
 
-## User Authentication
+### Session Creation
 
-User authentication creates the SID needed to launch the course player.
+User sessions include the SID needed to launch the Versal Course Player.
 
-### Sample Request
+#### Sample Request
 
 ```bash
 curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
@@ -116,7 +157,7 @@ curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
 Either the `email` or `userId` field is required, but not both. Make sure the
 emails you supply on user creation are unique.
 
-### Sample Response
+#### Sample Response
 
 ```javascript
 {
@@ -153,11 +194,11 @@ emails you supply on user creation are unique.
 </tbody>
 </table>
 
-## User Lookup
+### User Retrieval
 
-SIDs created during authentication may subsequently be used to retrieve the user
+A valid user session ID may be used to retrieve details about the related user.
 
-### Sample Request
+#### Sample Request
 
 ```
 curl -H 'SID: abcdeffe-1234-4321-5678-123456789' \
@@ -165,7 +206,7 @@ curl -H 'SID: abcdeffe-1234-4321-5678-123456789' \
   https://stack.versal.com/api2/user
 ```
 
-### Sample Response
+#### Sample Response
 ```javascript
 {
   "id": "1234",
@@ -211,13 +252,13 @@ curl -H 'SID: abcdeffe-1234-4321-5678-123456789' \
 </tbody>
 </table>
 
-## User update
+### User Updates
 
-SIDs created during authentication may subsequently be used to update the user's
-attributes. Note that the `PUT` verb in this instances behaves as a `PATCH`:
-attributes omitted in an update request will simply be ignored by the server.
+Both API keys _and_ user session IDs may be used to modify existing users. Note
+that the `PUT` verb in this instances behaves as a `PATCH`: attributes omitted
+in an update request will simply be ignored by the server.
 
-### Sample Request
+#### Sample Request
 
 ```
 curl -H 'SID: abcdeffe-1234-4321-5678-123456789' \
@@ -226,7 +267,7 @@ curl -H 'SID: abcdeffe-1234-4321-5678-123456789' \
   https://stack.versal.com/api2/users/1234
 ```
 
-### Sample Response
+#### Sample Response
 ```javascript
 {
   "id": "1234",
@@ -272,19 +313,19 @@ curl -H 'SID: abcdeffe-1234-4321-5678-123456789' \
 </tbody>
 </table>
 
-## List of Courses
+### Course Listing
 
 Courses are available from a globally-available list with optional
 per-organization filtering.
 
-### Sample Request
+#### Sample Request
 
 ```bash
 curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
   https://stack.versal.com/api2/courses?orgId=myorganization
 ```
 
-### Sample Response
+#### Sample Response
 
 ```javascript
 [
@@ -301,20 +342,21 @@ curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
 ]
 
 ```
-## Single Course
+
+### Course Retrieval
 
 Deep course requests (`?depth=full`) retrieve the complete content of a course.
 These requests expose the lesson and gadget IDs required by subsequent
 statistics requests.
 
-### Sample Request
+#### Sample Request
 
 ```bash
 curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
   https://stack.versal.com/api2/courses/1234?depth=full
 ```
 
-### Sample Response
+#### Sample Response
 
 ```javascript
 {
@@ -377,11 +419,12 @@ curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
 </tbody>
 </table>
 
-## Track Learner Course Activity
+### Course User Tracking
 
-Tracking a learner on a course makes that learner's course progress visible.
+Tracking a user within a course will include that learner's progress in
+subsequent course progress reports.
 
-### Sample Request
+#### Sample Request
 
 ```bash
 curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
@@ -390,7 +433,7 @@ curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
   https://stack.versal.com/api2/courses/1234/users/1234
 ```
 
-### Sample Response
+#### Sample Response
 
 ```javascript
 {
@@ -425,19 +468,19 @@ curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
     </tbody>
 </table>
 
-## Learner Progress
+### Learner Progress Retrieval
 
 Learner progress requests retrieve a summary of the progress of all users
 enrolled in a specific course.
 
-### Sample Request
+#### Sample Request
 
 ```bash
 curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
   https://stack.versal.com/api2/courses/1234/userdata
 ```
 
-### Sample Response
+#### Sample Response
 
 ```javascript
 [{
@@ -448,7 +491,6 @@ curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
   "title": "Intro to Versal",
   "lastActivity": "2013-10-26T21:46:39.000Z",
   "currentLesson": 3,
-  "lastLesson": 2,
   "lastSurveyCompleted": "How is Versal?",
   "courseCompleted": true
 }]
@@ -497,11 +539,6 @@ curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
   <td>Index of the most recent lesson accessed by the user</td>
 </tr>
 <tr>
-  <td><tt>lastLesson</tt></td>
-  <td><tt>Number</tt></td>
-  <td>Index of the previous lesson accessed by the user</td>
-</tr>
-<tr>
   <td><tt>lastSurveyCompleted</tt></td>
   <td><tt>String</tt></td>
   <td>Title of the last survey completed</td>
@@ -514,19 +551,19 @@ curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
 </tbody>
 </table>
 
-## Gadget Config
+### Gadget Configuration Retrieval
 
 Gadget configurations include all user-defined metadata (e.g. the title and
 questions of a survey) attached to a particular gadget.
 
-### Sample Request
+#### Sample Request
 
 ```bash
 curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
   https://stack.versal.com/api2/courses/123/lessons/123/gadgets/321/config
 ```
 
-### Sample Response (will vary between gadgets)
+#### Sample Response (will vary between gadgets)
 
 ```javascript
 {
@@ -537,19 +574,19 @@ curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
 ***Note****: the contents of the response **Object** are defined at the gadget
 level and will vary from one gadget to the next*
 
-## Gadget User Data
+### Gadget User Data Retrieval
 
 Gadget user data requests return the interactions of all users with a particular
 gadget (e.g. user responses to a survey)
 
-### Sample Request
+#### Sample Request
 
 ```bash
 curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
   https://stack.versal.com/api2/courses/123/lessons/123/gadgets/321/userdata
 ```
 
-### Sample Response
+#### Sample Response
 
 ```javascript
 [{
@@ -591,3 +628,7 @@ curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
 
 ***Note:*** *the schema of the _state_ field in the response is defined at the
 gadget level and will vary from one gadget to the next.*
+
+[player-embedding]: https://support.versal.com/hc/en-us/articles/203271866-Embedding-organizational-courses
+[versal-support]: https://support.versal.com
+[versal-business]: https://versal.com/business
