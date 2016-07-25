@@ -497,12 +497,34 @@ curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
 Learner progress requests retrieve a summary of the progress of all users
 enrolled in a specific course.
 
+#### Request Filters
+<table width="250.0%" cellspacing="0" cellpadding="0" class="t1">
+    <tbody>
+        <tr>
+            <th>Field Name</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td><tt>userIds</tt></td>
+            <td><tt>Comma-separated list of user IDs</tt></td>
+            <td>Restricts results to progress records for learners having the given user IDs</td>
+        </tr>
+    </tbody>
+</table>
+
 #### Sample Request
 
 ```bash
 curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
   https://stack.versal.com/api2/courses/1234/userdata
 ```
+
+```bash
+curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
+  'https://stack.versal.com/api2/courses/1234/userdata?userIds=1234,5678'
+```
+
 
 #### Sample Response
 
