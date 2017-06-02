@@ -186,7 +186,7 @@ emails you supply on user creation are unique.
 </tbody>
 </table>
 
-### User Management 
+### User Creation 
 
 New users may be created within an organization by e-mail address.
 
