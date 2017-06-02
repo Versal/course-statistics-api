@@ -2,11 +2,11 @@
 
 ## Overview
 
-The Versal Course Statistics API enables organizations to manage learners,
+The Versal Course Statistics API enables organizations to manage users,
 courses, and performance metrics from applications built on top of the [Versal
 Platform](https://versal.com).
 
-**Version**: 0.7.0
+**Version**: 0.8.0
 
 ## Contents
 
@@ -55,6 +55,40 @@ User sessions grant a _single user_ restricted access to organization resources.
 They can be used to retrieve, launch, and consume content using the Versal
 Course Player.
 
+### User Roles
+
+Users are assigned a _role_ within your organization. 
+
+<table width="250.0%" cellspacing="0" cellpadding="0" class="t1">
+<tbody>
+<tr>
+  <th>Role</th>
+  <th>Description</th>
+</tr>
+<tr>
+    <td>admin</td>
+    <td>
+        Admins have full control over all of the resources within the organization. They can add and remove users
+         from the organization, manage user roles, edit and manage courses, and view course analytics.
+    </td>
+</tr>
+<tr>
+    <td>instructor</td>
+    <td>
+        Instructors can view any course shared with the organization, create and manage their own courses, invite
+        learners to courses, and view course analytics.
+    </td>
+</tr>
+<tr>
+    <td>learner</td>
+    <td>
+        Learners can enroll in any course shared with the organization. 
+    </td>
+</tr>
+</tbody>
+</table>
+
+
 ### Versal Course Player
 
 The Versal Course Player is a browser-based runtime for Versal course content.
@@ -98,7 +132,7 @@ curl https://stack.versal.com/api2/courses/123/userdata?page=2 \
 
 ## Reference
 
-### User Creation
+### User Management 
 
 New users may be created within an organization by e-mail address.
 
