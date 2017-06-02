@@ -201,7 +201,8 @@ curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
 
 ### Session Creation
 
-User sessions include the SID needed to launch the Versal Course Player.
+User sessions include the SID needed to launch the Versal Course Player. User sessions have a 30-day lifetime. 
+The session lifetime is refreshed with every use.
 
 #### Sample Request
 
