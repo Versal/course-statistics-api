@@ -310,7 +310,7 @@ curl -H 'SID: abcdeffe-1234-4321-5678-123456789' \
 </tbody>
 </table>
 
-### User Updates
+### User Record Updates
 
 Both API keys _and_ user session IDs may be used to modify existing users. Note
 that the `PUT` verb in this instances behaves as a `PATCH`: attributes omitted
@@ -370,6 +370,106 @@ curl -H 'SID: abcdeffe-1234-4321-5678-123456789' \
 </tr>
 </tbody>
 </table>
+
+### User Role Updates
+
+A user's role within the organization can be changed or removed.
+
+Updating a user's role:
+
+#### Sample Request
+```bash
+curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
+   -X PUT \
+   https://stack.versal.com/api2/orgs/:orgId/users/:userId \
+   -d '{"roles":["instructor"]}'
+```
+
+#### Sample Response
+`{}`
+
+Revoking a user's role:
+
+#### Sample Request
+```bash
+curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
+   -X PUT \
+   https://stack.versal.com/api2/orgs/:orgId/users/:userId \
+   -d '{"roles":[]}'
+```
+
+#### Sample Response
+`{}`
+
+### Removing A User
+
+Removing a user from your organization revokes the user's role and access to the organization's courses.
+ 
+#### Sample Request
+
+```bash
+curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
+   -X DELETE \
+   https://stack.versal.com/api2/orgs/:orgId/users/:userId
+```
+
+#### Sample Response
+
+`{}`
+
+### User Listing
+
+The organization member listing displays users in your organization and their assigned role. Users that are part of
+the organization but have not been assigned a role are shown with an empty `roles:[]` record.
+
+#### Sample Request
+
+```bash
+curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
+    https://stack.versal.com/api2/orgs/:orgId/members
+
+```
+
+#### Sample Response
+```json
+[
+  {
+    "user": {
+      "id": "406000000",
+      "fullname": "Anne Admin"
+    },
+    "roles": [
+      "admin"
+    ]
+  },
+  {
+    "user": {
+      "id": "406000001",
+      "fullname": "Ida Instructor"
+    },
+    "roles": [
+      "instructor"
+    ]
+  },
+  {
+    "user": {
+      "id": "406000002",
+      "fullname": "Larry Learner"
+    },
+    "roles": [
+      "learner"
+    ]
+  },
+  {
+    "user": {
+      "id": "406000003",
+      "fullname": "Inactive Member"
+    },
+    "roles": [ ]
+  }
+]
+
+```
 
 ### Course Listing
 
