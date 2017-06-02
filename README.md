@@ -21,8 +21,8 @@ Platform](https://versal.com).
     - [Authentication](#authentication)
     - [Pagination](#pagination)
   - [Reference](#reference)
-    - [User Creation](#user-creation)
     - [Session Creation](#session-creation)
+    - [User Creation](#user-creation)
     - [User Retrieval](#user-retrieval)
     - [User Updates](#user-updates)
     - [Course Listing](#course-listing)
@@ -132,6 +132,60 @@ curl https://stack.versal.com/api2/courses/123/userdata?page=2 \
 
 ## Reference
 
+### Session Creation
+
+User sessions include the SID needed to launch the Versal Course Player. User sessions have a 30-day lifetime. 
+The session lifetime is refreshed with every use.
+
+#### Sample Request
+
+```bash
+curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
+  -X POST \
+  -d '{ "email": "rj@versal.com", "userId": "1234" }' \
+  https://stack.versal.com/api2/sessions
+```
+
+Either the `email` or `userId` field is required, but not both. Make sure the
+emails you supply on user creation are unique.
+
+#### Sample Response
+
+```javascript
+{
+  "sessionId": "abcdeffe-1234-4321-5678-123456789",
+  "user": {
+    "id": "1234",
+    "email": "rj@versal.com",
+    "firstname": "RJ",
+    "lastname": "Zaworski",
+    "fullname": "RJ Zaworski"
+  }
+}
+```
+
+<table width="250.0%" cellspacing="0" cellpadding="0" class="t1">
+<tbody>
+<tr>
+  <th>Field Name</th>
+  <th>Type</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td><tt>sessionId</tt></td>
+  <td><tt>String</tt></td>
+  <td>A valid session ID (SID) for the user</td>
+</tr>
+<tr>
+  <td><tt>user</tt></td>
+  <td><tt>Object</tt></td>
+  <td>A complete representation of the signed-in user, including:
+* id — String the user’s ID
+* email — String the user’s e-mail</td>
+</tr>
+</tbody>
+</table>
+
 ### User Management 
 
 New users may be created within an organization by e-mail address.
@@ -195,60 +249,6 @@ curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
   <td><tt>fullname</tt></td>
   <td><tt>String</tt></td>
   <td>(Optional) The new user’s full name, or concatenated first and last name if full name is not provided</td>
-</tr>
-</tbody>
-</table>
-
-### Session Creation
-
-User sessions include the SID needed to launch the Versal Course Player. User sessions have a 30-day lifetime. 
-The session lifetime is refreshed with every use.
-
-#### Sample Request
-
-```bash
-curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
-  -X POST \
-  -d '{ "email": "rj@versal.com", "userId": "1234" }' \
-  https://stack.versal.com/api2/sessions
-```
-
-Either the `email` or `userId` field is required, but not both. Make sure the
-emails you supply on user creation are unique.
-
-#### Sample Response
-
-```javascript
-{
-  "sessionId": "abcdeffe-1234-4321-5678-123456789",
-  "user": {
-    "id": "1234",
-    "email": "rj@versal.com",
-    "firstname": "RJ",
-    "lastname": "Zaworski",
-    "fullname": "RJ Zaworski"
-  }
-}
-```
-
-<table width="250.0%" cellspacing="0" cellpadding="0" class="t1">
-<tbody>
-<tr>
-  <th>Field Name</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-<tr>
-  <td><tt>sessionId</tt></td>
-  <td><tt>String</tt></td>
-  <td>A valid session ID (SID) for the user</td>
-</tr>
-<tr>
-  <td><tt>user</tt></td>
-  <td><tt>Object</tt></td>
-  <td>A complete representation of the signed-in user, including:
-* id — String the user’s ID
-* email — String the user’s e-mail</td>
 </tr>
 </tbody>
 </table>
