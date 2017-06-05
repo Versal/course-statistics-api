@@ -2,11 +2,11 @@
 
 ## Overview
 
-The Versal Course Statistics API enables organizations to manage learners,
+The Versal Course Statistics API enables organizations to manage users,
 courses, and performance metrics from applications built on top of the [Versal
 Platform](https://versal.com).
 
-**Version**: 0.7.0
+**Version**: 0.8.0
 
 ## Contents
 
@@ -21,8 +21,8 @@ Platform](https://versal.com).
     - [Authentication](#authentication)
     - [Pagination](#pagination)
   - [Reference](#reference)
-    - [User Creation](#user-creation)
     - [Session Creation](#session-creation)
+    - [User Creation](#user-creation)
     - [User Retrieval](#user-retrieval)
     - [User Updates](#user-updates)
     - [Course Listing](#course-listing)
@@ -54,6 +54,40 @@ your API key.
 User sessions grant a _single user_ restricted access to organization resources.
 They can be used to retrieve, launch, and consume content using the Versal
 Course Player.
+
+### User Roles
+
+Users are assigned a _role_ within your organization. 
+
+<table width="250.0%" cellspacing="0" cellpadding="0" class="t1">
+<tbody>
+<tr>
+  <th>Role</th>
+  <th>Description</th>
+</tr>
+<tr>
+    <td>admin</td>
+    <td>
+        Admins have full control over all of the resources within the organization. They can add and remove users
+         from the organization, manage user roles, edit and manage courses, and view course analytics.
+    </td>
+</tr>
+<tr>
+    <td>instructor</td>
+    <td>
+        Instructors can view any course shared with the organization, create and manage their own courses, invite
+        learners to courses, and view course analytics.
+    </td>
+</tr>
+<tr>
+    <td>learner</td>
+    <td>
+        Learners can enroll in any course shared with the organization. 
+    </td>
+</tr>
+</tbody>
+</table>
+
 
 ### Versal Course Player
 
@@ -98,7 +132,61 @@ curl https://stack.versal.com/api2/courses/123/userdata?page=2 \
 
 ## Reference
 
-### User Creation
+### Session Creation
+
+User sessions include the SID needed to launch the Versal Course Player. User sessions have a 30-day lifetime. 
+The session lifetime is refreshed with every use.
+
+#### Sample Request
+
+```bash
+curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
+  -X POST \
+  -d '{ "email": "rj@versal.com", "userId": "1234" }' \
+  https://stack.versal.com/api2/sessions
+```
+
+Either the `email` or `userId` field is required, but not both. Make sure the
+emails you supply on user creation are unique.
+
+#### Sample Response
+
+```javascript
+{
+  "sessionId": "abcdeffe-1234-4321-5678-123456789",
+  "user": {
+    "id": "1234",
+    "email": "rj@versal.com",
+    "firstname": "RJ",
+    "lastname": "Zaworski",
+    "fullname": "RJ Zaworski"
+  }
+}
+```
+
+<table width="250.0%" cellspacing="0" cellpadding="0" class="t1">
+<tbody>
+<tr>
+  <th>Field Name</th>
+  <th>Type</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td><tt>sessionId</tt></td>
+  <td><tt>String</tt></td>
+  <td>A valid session ID (SID) for the user</td>
+</tr>
+<tr>
+  <td><tt>user</tt></td>
+  <td><tt>Object</tt></td>
+  <td>A complete representation of the signed-in user, including:
+* id — String the user’s ID
+* email — String the user’s e-mail</td>
+</tr>
+</tbody>
+</table>
+
+### User Creation 
 
 New users may be created within an organization by e-mail address.
 
@@ -165,59 +253,6 @@ curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
 </tbody>
 </table>
 
-### Session Creation
-
-User sessions include the SID needed to launch the Versal Course Player.
-
-#### Sample Request
-
-```bash
-curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
-  -X POST \
-  -d '{ "email": "rj@versal.com", "userId": "1234" }' \
-  https://stack.versal.com/api2/sessions
-```
-
-Either the `email` or `userId` field is required, but not both. Make sure the
-emails you supply on user creation are unique.
-
-#### Sample Response
-
-```javascript
-{
-  "sessionId": "abcdeffe-1234-4321-5678-123456789",
-  "user": {
-    "id": "1234",
-    "email": "rj@versal.com",
-    "firstname": "RJ",
-    "lastname": "Zaworski",
-    "fullname": "RJ Zaworski"
-  }
-}
-```
-
-<table width="250.0%" cellspacing="0" cellpadding="0" class="t1">
-<tbody>
-<tr>
-  <th>Field Name</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-<tr>
-  <td><tt>sessionId</tt></td>
-  <td><tt>String</tt></td>
-  <td>A valid session ID (SID) for the user</td>
-</tr>
-<tr>
-  <td><tt>user</tt></td>
-  <td><tt>Object</tt></td>
-  <td>A complete representation of the signed-in user, including:
-* id — String the user’s ID
-* email — String the user’s e-mail</td>
-</tr>
-</tbody>
-</table>
-
 ### User Retrieval
 
 A valid user session ID may be used to retrieve details about the related user.
@@ -276,7 +311,7 @@ curl -H 'SID: abcdeffe-1234-4321-5678-123456789' \
 </tbody>
 </table>
 
-### User Updates
+### User Record Updates
 
 Both API keys _and_ user session IDs may be used to modify existing users. Note
 that the `PUT` verb in this instances behaves as a `PATCH`: attributes omitted
@@ -336,6 +371,106 @@ curl -H 'SID: abcdeffe-1234-4321-5678-123456789' \
 </tr>
 </tbody>
 </table>
+
+### User Role Updates
+
+A user's role within the organization can be changed or removed.
+
+Updating a user's role:
+
+#### Sample Request
+```bash
+curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
+   -X PUT \
+   https://stack.versal.com/api2/orgs/:orgId/users/:userId \
+   -d '{"roles":["instructor"]}'
+```
+
+#### Sample Response
+`{}`
+
+Revoking a user's role:
+
+#### Sample Request
+```bash
+curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
+   -X PUT \
+   https://stack.versal.com/api2/orgs/:orgId/users/:userId \
+   -d '{"roles":[]}'
+```
+
+#### Sample Response
+`{}`
+
+### Removing A User
+
+Removing a user from your organization revokes the user's role and access to the organization's courses.
+ 
+#### Sample Request
+
+```bash
+curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
+   -X DELETE \
+   https://stack.versal.com/api2/orgs/:orgId/users/:userId
+```
+
+#### Sample Response
+
+`{}`
+
+### User Listing
+
+The organization member listing displays users in your organization and their assigned role. Users that are part of
+the organization but have not been assigned a role are shown with an empty `roles:[]` record.
+
+#### Sample Request
+
+```bash
+curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
+    https://stack.versal.com/api2/orgs/:orgId/members
+
+```
+
+#### Sample Response
+```json
+[
+  {
+    "user": {
+      "id": "406000000",
+      "fullname": "Anne Admin"
+    },
+    "roles": [
+      "admin"
+    ]
+  },
+  {
+    "user": {
+      "id": "406000001",
+      "fullname": "Ida Instructor"
+    },
+    "roles": [
+      "instructor"
+    ]
+  },
+  {
+    "user": {
+      "id": "406000002",
+      "fullname": "Larry Learner"
+    },
+    "roles": [
+      "learner"
+    ]
+  },
+  {
+    "user": {
+      "id": "406000003",
+      "fullname": "Inactive Member"
+    },
+    "roles": [ ]
+  }
+]
+
+```
 
 ### Course Listing
 
