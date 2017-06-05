@@ -1,8 +1,8 @@
-# Versal Course Statistics API
+# Versal Partner API
 
 ## Overview
 
-The Versal Course Statistics API enables organizations to manage users,
+The Versal Partner API enables organizations to manage users,
 courses, and performance metrics from applications built on top of the [Versal
 Platform](https://versal.com).
 
@@ -101,7 +101,7 @@ An overview of its usage and API is available [here][player-embedding].
 
 ### Requests
 
-All requests and responses reference the Versal Course Statistics API available
+All requests and responses reference the Versal Partner API available
 at: `https://stack.versal.com/api2`. Requests _must_ be made over HTTPS;
 requests over standard HTTP will be redirected to the corresponding HTTPS
 endpoint.
@@ -508,8 +508,7 @@ curl -H 'SID: 28438e94-480d-11e3-95fd-ce3f5508acd9' \
 ### Course Retrieval
 
 Deep course requests (`?depth=full`) retrieve the complete content of a course.
-These requests expose the lesson and gadget IDs required by subsequent
-statistics requests.
+These requests expose the lesson and gadget IDs required by subsequent requests.
 
 #### Sample Request
 
