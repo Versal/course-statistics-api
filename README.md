@@ -431,141 +431,141 @@ Returns a paginated result set.
 
 ### Base_Course_View_Model  
 
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| catalogs | [ string ] | Contains 'labs' if the course has been published | No |
-| courseId | string | Duplicate of id. | No |
-| coverImage | object | Course cover image metadata. Omitted if the course does not have a cover image. | No |
-| createdAt | date | Course creation time | No |
-| id | string | Unique, API-generated course identifier | No |
-| public | boolean | Indicates whether the course is publicly available | No |
-| longDesc | string | A paragraph statement describing the course. Omitted if not defined. | No |
-| shortDesc | string | A summary statement of the course. Omitted if not defined. | No |
-| tags | [ string ] | A list of user-defined tags indicating course metadata | No |
-| title | string | Course title. Omitted if not defined. | No |
-| users | [ [User_View_Model](#user_view_model) ] | Lists users with rights to edit and/or publish the course | No |
+| Name | Type | Description | 
+| ---- | ---- | ----------- |
+| catalogs | [ string ] | Contains 'labs' if the course has been published |
+| courseId | string | Duplicate of id. |
+| coverImage | object | Course cover image metadata. Omitted if the course does not have a cover image. |
+| createdAt | date | Course creation time |
+| id | string | Unique, API-generated course identifier |
+| public | boolean | Indicates whether the course is publicly available |
+| longDesc | string | A paragraph statement describing the course. Omitted if not defined. |
+| shortDesc | string | A summary statement of the course. Omitted if not defined. |
+| tags | [ string ] | A list of user-defined tags indicating course metadata |
+| title | string | Course title. Omitted if not defined. |
+| users | [ [User_View_Model](#user_view_model) ] | Lists users with rights to edit and/or publish the course |
 
 ### Error_View_Model  
 
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| error | integer | HTTP error code | No |
-| message | string | Describes the error condition | No |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| error | integer | HTTP error code |
+| message | string | Describes the error condition |
 
 ### Extended_Course_View_Model  
 
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| catalogs | [ string ] | Contains 'labs' if the course has been published | No |
-| courseId | string | Duplicate of id. | No |
-| coverImage | object | Course cover image metadata. Omitted if the course does not have a cover image. | No |
-| createdAt | date | Course creation time | No |
-| id | string | Unique, API-generated course identifier | No |
-| public | boolean | Indicates whether the course is publicly available | No |
-| longDesc | string | A paragraph statement describing the course. Omitted if not defined. | No |
-| shortDesc | string | A summary statement of the course. Omitted if not defined. | No |
-| tags | [ string ] | A list of user-defined tags indicating course metadata | No |
-| title | string | Course title. Omitted if not defined. | No |
-| users | [ [User_View_Model](#user_view_model) ] | Lists users with rights to edit and/or publish the course | No |
-| lastPublished | date | Date of most recent course publication | No |
-| lessons | [ [Lesson_View_Model](#lesson_view_model) ] |  | No |
+| Name | Type | Description | 
+| ---- | ---- | ----------- | 
+| catalogs | [ string ] | Contains 'labs' if the course has been published |
+| courseId | string | Duplicate of id. |
+| coverImage | object | Course cover image metadata. Omitted if the course does not have a cover image. |
+| createdAt | date | Course creation time |
+| id | string | Unique, API-generated course identifier |
+| public | boolean | Indicates whether the course is publicly available |
+| longDesc | string | A paragraph statement describing the course. Omitted if not defined. |
+| shortDesc | string | A summary statement of the course. Omitted if not defined. |
+| tags | [ string ] | A list of user-defined tags indicating course metadata |
+| title | string | Course title. Omitted if not defined. |
+| users | [ [User_View_Model](#user_view_model) ] | Lists users with rights to edit and/or publish the course |
+| lastPublished | date | Date of most recent course publication |
+| lessons | [ [Lesson_View_Model](#lesson_view_model) ] |  |
 
 ### Gadget_View_model  
 
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| id | string | Gadget identifier. Unique within a course. | No |
-| type | string | Gadget type | No |
-| config | object | Schema varies by gadget type | No |
+| Name | Type | Description | 
+| ---- | ---- | ----------- | 
+| id | string | Gadget identifier. Unique within a course. |
+| type | string | Gadget type |
+| config | object | Schema varies by gadget type |
 
 ### Gadget_User_Data_View_Model  
 
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| user | [User_View_Model](#user_view_model) |  | No |
-| state | object | Schema varies by gadget type | No |
+| Name | Type | Description | 
+| ---- | ---- | ----------- | 
+| user | [User_View_Model](#user_view_model) |  |
+| state | object | Schema varies by gadget type |
 
 ### Learner_Progress_View_Model  
 
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| completeDate | date | Date learner completed the course. Omitted if learner has not completed the course. | No |
-| lastActivity | date | Date learner last visited the course | No |
-| email | string (email) | Learner's email address. Omitted if not available. | No |
-| courseCompleted | boolean | Indicates whether learner has completed the course | No |
-| firstname | string | Learner's given name. Omitted if not available. | No |
-| currentLesson | integer | Index of last visited lesson | No |
-| lastname | string | Learner's family name. Omitted if not available. | No |
-| id | string | Learner's user ID | No |
-| fullname | string | Learner's full name. Omitted if not available. | No |
-| title | string | Course title | No |
-| startDate | date | Date learner started the course | No |
-| currentLessonId | string | ID of last visited lesson | No |
+| Name | Type | Description | 
+| ---- | ---- | ----------- | 
+| completeDate | date | Date learner completed the course. Omitted if learner has not completed the course. |
+| lastActivity | date | Date learner last visited the course |
+| email | string (email) | Learner's email address. Omitted if not available. |
+| courseCompleted | boolean | Indicates whether learner has completed the course |
+| firstname | string | Learner's given name. Omitted if not available. |
+| currentLesson | integer | Index of last visited lesson |
+| lastname | string | Learner's family name. Omitted if not available. |
+| id | string | Learner's user ID |
+| fullname | string | Learner's full name. Omitted if not available. |
+| title | string | Course title |
+| startDate | date | Date learner started the course |
+| currentLessonId | string | ID of last visited lesson |
 
 ### Lesson_View_Model  
 
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| id | string | Lesson identifier. Unique within a course. | No |
-| title | string | Lesson title. | No |
-| gadgets | [ [Gadget_View_model](#gadget_view_model) ] |  | No |
+| Name | Type | Description | 
+| ---- | ---- | ----------- | 
+| id | string | Lesson identifier. Unique within a course. |
+| title | string | Lesson title. |
+| gadgets | [ [Gadget_View_model](#gadget_view_model) ] |  |
 
 ### Member_View_Model  
 
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| id | string | User API ID | No |
-| firstname | string | Given name | No |
-| lastname | string | Family name | No |
-| fullname | string | Full name | No |
-| email | string (email) |  | No |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| id | string | User API ID |
+| firstname | string | Given name |
+| lastname | string | Family name |
+| fullname | string | Full name |
+| email | string (email) |  |
 
 ### Org_Member_View_Model  
 
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| user | [Member_View_Model](#member_view_model) |  | No |
-| roles | [ string ] |  | No |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| user | [Member_View_Model](#member_view_model) |  |
+| roles | [ string ] | Accepted values: "admin", "instructor", "learner" | No |
 
 ### Org_User_Input_Model  
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
-| roles | [ string ] |  | No |
-| user | [User_Input_Model](#user_input_model) |  | No |
+| roles | [ string ] | Accepted values: "admin", "instructor", "learner" | Yes |
+| user | [User_Input_Model](#user_input_model) |  | Yes |
 
 ### Org_User_View_Model  
 
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| roles | [ string ] |  | No |
-| user | [User_View_Model](#user_view_model) |  | No |
+| Name | Type | Description | 
+| ---- | ---- | ----------- |
+| roles | [ string ] | Values: "admin", "instructor", "learner" | No |
+| user | [User_View_Model](#user_view_model) |  |
 
 ### Role_Update_Input_Model  
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
-| roles | [ string ] |  | No |
+| roles | [ string ] | Accepted values: "admin", "instructor", "learner" | Yes |
 
 ### Session_Input_Model  
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
-| userId | string (int64) | Required if email is not given | No |
-| email | string (email) | Required if userId is not given | No |
+| userId | string (int64) | Required if email is not given | (Yes) |
+| email | string (email) | Required if userId is not given | (Yes) |
 
 ### Session_View_Model  
 
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| sessionId | string |  | No |
-| user | [User_View_Model](#user_view_model) |  | No |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| sessionId | string |  |
+| user | [User_View_Model](#user_view_model) |  |
 
 ### User_Input_Model  
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
-| email | string (email) | Unique email address | No |
+| email | string (email) | Unique email address | Yes |
 | firstname | string | Given name | No |
 | lastname | string | Family name | No |
 | fullname | string | Full name | No |
@@ -584,16 +584,16 @@ Returns a paginated result set.
 
 ### User_View_Model  
 
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| id | string (int64) | Unique API-generated identifier | No |
-| username | string | A unique, human-readable user identifier | No |
-| email | string (email) | Unique email address | No |
-| firstname | string | Given name | No |
-| lastname | string | Family name | No |
-| fullname | string | Full name | No |
-| fn | string | Alternate full name | No |
-| displayname | string | A calculated display name based on available non-null name fields | No |
-| longDesc | string | A paragraph about the user | No |
-| shortDesc | string | A brief statement about the user | No |
-| image | object | Profile image asset metadata | No |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| id | string (int64) | Unique API-generated identifier |
+| username | string | A unique, human-readable user identifier |
+| email | string (email) | Unique email address |
+| firstname | string | Given name |
+| lastname | string | Family name |
+| fullname | string | Full name |
+| fn | string | Alternate full name |
+| displayname | string | A calculated display name based on available non-null name fields |
+| longDesc | string | A paragraph about the user |
+| shortDesc | string | A brief statement about the user |
+| image | object | Profile image asset metadata |
