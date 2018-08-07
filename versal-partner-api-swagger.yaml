@@ -1,0 +1,1195 @@
+swagger: '2.0'
+info:
+  description: >-
+    The Versal Partner API enables organizations to manage users, courses, and
+    performance metrics from applications built on top of the Versal Platform.
+    
+    # Concepts
+    
+    ## API Keys
+    
+    API keys grant broad access to organization data on Versal. Among other operations, they can be used to:
+    
+    - create and modify organization users
+    
+    - create sessions for organization users
+    
+    - retrieve organizational courses
+    
+    - retrieve learner metrics
+
+
+    If your existing organization has not received an API key, please [contact Versal support](https://support.versal.com) and we will issue one. If you have not yet registered with Versal, [sign up for a free trial](https://versal.com/trial/business) to receive your API key.
+
+    ## User Sessions
+    
+    User sessions grant a single user restricted access to organization resources. They can be used to retrieve, launch, and consume content using the Versal Course Player.
+
+    ## User Roles
+    
+    Users are assigned a role within your organization.
+    
+      | Role        | Description           | 
+      | ------------- |---------------| 
+      | admin|  Admins have full control over all of the resources within the organization. They can add and remove users from the organization, manage user roles, edit and manage courses, and view course analytics.
+      | instructor|  Instructors can view any course shared with the organization, create and manage their own courses, invite learners to courses, and view course analytics.
+      | learner|  Learners can enroll in any course shared with the organization.
+
+
+    ## Versal Course Player
+    
+    The Versal Course Player is a browser-based runtime for Versal course content. An overview of its usage and API is available [here](https://support.versal.com/hc/en-us/articles/203271866-Embedding-organizational-courses).
+    
+    # Topics
+
+    ## Requests
+
+    All requests and responses reference the Versal Partner API available at: https://stack.versal.com/api2. Requests must be made over HTTPS; requests over standard HTTP will be redirected to the corresponding HTTPS endpoint.
+
+    ## Authentication
+
+    All requests to the Versal API must include an SID header with a valid API key or user session ID. If your organization has not received an API key, please please [contact Versal support](https://support.versal.com) and we will issue one.
+    
+    
+    ```
+    curl -H 'SID: YOUR_API_KEY' https://stack.versal.com/api2/courses/123 
+    ```
+
+    ## Pagination
+
+    All responses for collections of resources return a subset of the collection and an X-Pagination header describing the total volume of resources available. The body of the header is a JSON object containing pagination information:
+    
+    
+    ```
+    X-Pagination: {"count":3737,"page":1,"nextPage":2,"perPage":20,"pageCount":187}
+    ```
+    
+    
+    Subsequent pages from the collection endpoint may be retrieved by setting the page query parameter:
+    
+    ```
+    curl https://stack.versal.com/api2/courses/123/userdata?page=2 -H 'SID: YOUR_API_KEY'
+    ```
+
+  version: "1.0"
+  title: Versal Partner API
+  termsOfService: 'https://versal.com/terms'
+host: stack.versal.com
+basePath: /api2
+tags:
+  - name: Sessions
+    description: Create learner API sessions to view and interact with content in your organization
+  - name: Users
+    description: Create and manage learners in your organization
+  - name: Courses
+    description: 'Course content including metadata, lessons, and gadgets'
+  - name: Course Learners
+    description: Track and view progress for course learners
+  - name: Gadget Configurations
+    description: >-
+      Gadget configurations include all user-defined metadata (e.g. the title
+      and questions of a survey) attached to a particular gadget.
+  - name: Gadget User Data
+    description: >-
+      Gadget user data requests return the interactions of all users with a
+      particular gadget (e.g. user responses to a survey)
+schemes:
+  - https
+paths:
+  /sessions:
+    post:
+      tags:
+        - Sessions
+      summary: Add a new user API session
+      description: >-
+        User sessions include the SID needed to launch the Versal Course Player.
+        User sessions have a 30-day lifetime. The session lifetime is refreshed
+        with every use.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: SID
+          required: true
+          type: string
+          format: uuid
+          description: API key
+        - in: body
+          name: body
+          description: Indicates the session owner user
+          required: true
+          schema:
+            $ref: '#/definitions/Session_Input_Model'
+      responses:
+        '201':
+          description: Session created
+          schema:
+            $ref: '#/definitions/Session_View_Model'
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '401':
+          description: Invalid credentials
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '403':
+          description: Insufficient permissions
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '404':
+          description: User not found
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+  '/orgs/{orgId}/users':
+    post:
+      tags:
+        - Users
+      summary: Add a new user to your organization with a role
+      description: Add a new user to your organization with a role
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: SID
+          required: true
+          type: string
+          format: uuid
+          description: API key
+        - in: path
+          name: orgId
+          required: true
+          type: integer
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/Org_User_Input_Model'
+      responses:
+        '201':
+          description: User created
+          schema:
+            $ref: '#/definitions/Org_User_View_Model'
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '401':
+          description: Invalid credentials
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '403':
+          description: Permission denied
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+  /user:
+    get:
+      tags:
+        - Users
+      summary: Retrieve the user associated with this SID
+      description: Retrieve the user associated with this SID
+      parameters:
+        - in: header
+          name: SID
+          required: true
+          type: string
+          format: uuid
+          description: The session ID for the user of interest
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/User_View_Model'
+        '401':
+          description: Invalid credentials
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+  '/users/{userId}':
+    put:
+      tags:
+        - Users
+      summary: Update a user record
+      description: >-
+        Both API keys and user session IDs may be used to modify existing users.
+        Note that the PUT verb in this instances behaves as a PATCH: attributes
+        omitted in an update request will simply be ignored by the server.
+      parameters:
+        - in: header
+          name: SID
+          required: true
+          type: string
+          format: uuid
+          description: API integration key or session belonging to the user of interest
+        - in: path
+          name: userId
+          required: true
+          type: integer
+          description: Numeric user ID
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/User_Patch_Model'
+      responses:
+        '201':
+          description: OK
+          schema:
+            $ref: '#/definitions/User_View_Model'
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '401':
+          description: Invalid credentials
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '403':
+          description: Insufficient permissions
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '404':
+          description: User not found
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+  '/orgs/{orgId}/users/{userId}':
+    put:
+      tags:
+        - Users
+      summary: Update a user's role in your organization
+      description: Change or remove a user's role within your organization
+      parameters:
+        - in: header
+          name: SID
+          required: true
+          type: string
+          format: uuid
+          description: API integration key
+        - in: path
+          name: orgId
+          description: Your numeric organization ID
+          required: true
+          type: integer
+        - in: path
+          name: userId
+          required: true
+          description: The numeric user ID
+          type: integer
+        - in: body
+          name: body
+          required: true
+          description: Describes user's updated role
+          schema:
+            $ref: '#/definitions/Role_Update_Input_Model'
+      responses:
+        '201':
+          description: OK
+          schema:
+            type: object
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '401':
+          description: Invalid credentials
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '403':
+          description: Insufficient permissions
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '404':
+          description: Org or User not found
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+  '/orgs/{orgId}/members':
+    get:
+      tags:
+        - Users
+      parameters:
+        - in: header
+          name: SID
+          required: true
+          type: string
+          format: uuid
+          description: API integration key
+        - in: path
+          name: orgId
+          description: Your numeric organization ID
+          required: true
+          type: integer
+        - in: query
+          name: page
+          type: integer
+          required: false
+          description: View page of a paginated result set
+          default: 1
+        - in: query
+          name: perPage
+          type: integer
+          required: false
+          description: Set page size of a paginated result set
+          default: 20
+      summary: List users in your organization
+      description: >-
+        The organization member listing displays users in your organization and
+        their assigned role. Users that are part of the organization but have
+        not been assigned a role are shown with an empty roles:[] record. 
+        
+        Returns a paginated result set.
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Org_Member_View_Model'
+          headers:
+            count:
+                type: integer
+                description: The total number of items available in the requested collection
+            page:
+                type: integer
+                description: The requested page number
+            pageCount:
+                type: integer
+                description: The number of pages available with the current perPage value
+            perPage:
+                type: integer
+                description: The requested number of items per page
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '401':
+          description: Invalid credentials
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '403':
+          description: Insufficient permissions
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '404':
+          description: Org not found
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+  /courses:
+    get:
+      tags:
+        - Courses
+      parameters:
+        - in: header
+          name: SID
+          required: true
+          type: string
+          format: uuid
+          description: API integration key or user session ID
+        - in: query
+          name: title
+          type: string
+          required: false
+          description: >-
+            Filter for courses with title containing this string (case
+            insensitive)
+        - in: query
+          name: author
+          type: integer
+          required: false
+          description: >-
+            Filter for courses where the given user ID has permission to edit
+            and/or publish the course
+        - in: query
+          name: catalog
+          type: string
+          enum:
+            - labs
+            - sandbox
+          description: >-
+            Filter for courses that are published ("labs") or unpublished
+            ("sandbox")
+          required: false
+        - in: query
+          name: page
+          type: integer
+          required: false
+          description: View page of a paginated result set
+          default: 1
+        - in: query
+          name: perPage
+          type: integer
+          required: false
+          description: Set page size of a paginated result set
+          default: 20
+      summary: List available courses
+      description: >-
+        Lists courses available to the calling session. 
+        
+        Published course revisions are returned when the calling session does not have edit
+        rights for the course. In-edit (sandbox) course revisions are returned when the calling session
+        has edit rights for the course.
+        
+        Returns a paginated result set.
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Base_Course_View_Model'
+          headers:
+            count:
+                type: integer
+                description: The total number of items available in the requested collection
+            page:
+                type: integer
+                description: The requested page number
+            pageCount:
+                type: integer
+                description: The number of pages available with the current perPage value
+            perPage:
+                type: integer
+                description: The requested number of items per page
+          
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '401':
+          description: Invalid credentials
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+  '/courses/{courseId}':
+    get:
+      tags:
+        - Courses
+      summary: Retrieve content and metadata of a course
+      description: >-
+        Deep course requests (?depth=full) retrieve the complete content of a
+        course. These requests expose the lesson and gadget IDs required by
+        subsequent requests.
+        
+        The published course revision is returned when the calling session does not have edit
+        rights for the course. The in-edit (sandbox) course revision is returned when the calling session
+        has edit rights for the course. To request the published course revision with a privileged session,
+        use "GET /catalogs/staged/courses/{courseId}"
+      parameters: 
+        - in: header
+          name: SID
+          required: true
+          type: string
+          format: uuid
+          description: API integration key or user session ID
+        - in: path
+          name: courseId
+          type: string
+          required: true
+        - in: query
+          name: depth
+          type: string
+          enum: 
+            - full
+            - lessons
+          description: >-
+            Depth "full" returns all course lessons and gadgets. Depth "lessons" returns course lessons
+            only and omits the lesson.gadget[] arrays.
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Extended_Course_View_Model'
+        '401':
+          description: Invalid credentials
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '403':
+          description: Permission denied
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+  "/catalogs/staged/courses/{courseId}":
+    get:
+      tags: 
+      - Courses
+      summary: 
+        Request the published revision of the given Course. See "GET /courses/{courseId}"
+      parameters: 
+        - in: path
+          name: courseId
+          type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Extended_Course_View_Model'
+        '401':
+          description: Invalid credentials
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '403':
+          description: Permission denied
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+  '/courses/{courseId}/users/{userId}':
+    patch:
+      tags:
+        - Course Learners
+      summary: Mark a learner as tracked for a course
+      description: >-
+        Tracking a user within a course will include that learner's progress in
+        subsequent course progress reports.
+      parameters:
+        - in: header
+          name: SID
+          required: true
+          type: string
+          format: uuid
+          description: API integration key
+        - in: path
+          name: courseId
+          type: string
+          required: true
+          description: Course where learner's progress will be tracked
+        - in: path
+          name: userId
+          type: string
+          description: Learner's user ID
+          required: true
+        - in: body
+          name: body
+          required: true
+          description: Toggles learner tracking for the user
+          schema:
+            type: object
+            properties:
+              tracked:
+                type: boolean
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              tracked:
+                type: boolean
+              user:
+                $ref: '#/definitions/User_View_Model'
+        400:
+          description: Bad request
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '401':
+          description: Invalid credentials
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '403':
+          description: Permission denied
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+  '/courses/{courseId}/userdata':
+    get:
+      tags:
+        - Course Learners
+      summary: Retrieve learner progress summaries for a course
+      description: >-
+        Learner progress requests retrieve a summary of the progress of all
+        users enrolled in a specific course.
+        
+        Returns a paginated result set.
+      parameters:
+        - in: header
+          name: SID
+          required: true
+          type: string
+          format: uuid
+          description: API integration key
+        - in: path
+          name: courseId
+          required: true
+          type: string
+        - in: query
+          name: page
+          type: integer
+          required: false
+          description: View page of a paginated result set
+          default: 1
+        - in: query
+          name: perPage
+          type: integer
+          required: false
+          description: Set page size of a paginated result set
+          default: 20
+        - in: query
+          name: userIds
+          required: false
+          type: string
+          format: CSV
+          description: Comma-separated list of user IDs. Results will be filtered to users in this list.
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Learner_Progress_View_Model'
+          headers:
+            count:
+                type: integer
+                description: The total number of items available in the requested collection
+            page:
+                type: integer
+                description: The requested page number
+            pageCount:
+                type: integer
+                description: The number of pages available with the current perPage value
+            perPage:
+                type: integer
+                description: The requested number of items per page
+        400:
+          description: Bad request
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '401':
+          description: Invalid credentials
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '403':
+          description: Permission denied
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+  '/courses/{courseId}/gadgets/{gadgetId}/config':
+    get:
+      tags:
+        - Gadget Configurations
+      summary: Retrieve the configuration for a single gadget
+      description: >-
+        Gadget configurations include all user-defined metadata (e.g. the title
+        and questions of a survey) attached to a particular gadget. Schema varies by gadget type.
+        
+        When the calling session belongs to any client with edit permissions on the parent course, the in-edit (sandbox) version of the gadget configuration is returned. When the calling session belongs to a client without edit permissions on the course, the published version of the gadget configuration is returned. 
+        
+        When the calling session belongs to a user with edit permissions on the parent course, the response will include the gadget's private fields (e.g., the answer key for a quiz gadget). For all other calling session types, gadget private fields will be redacted from the response.
+      parameters:
+        - in: path
+          name: courseId
+          type: string
+          description: ID for the course containing the gadget
+          required: true
+        - in: path
+          name: gadgetId
+          type: string
+          description: Gadget ID
+          required: true
+        - in: header
+          name: SID
+          required: true
+          type: string
+          format: uuid
+          description: API integration key or user session
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '401':
+          description: Invalid credentials
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '403':
+          description: Permission denied
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/Error_View_Model'  
+        
+  '/catalogs/staged/courses/{courseId}/gadgets/{gadgetId}/config':
+    get:
+      tags:
+        - Gadget Configurations
+      summary: Retrieve the published version of the configuration for a single gadget
+      description: >-
+        See "GET /courses/{courseId}/gadgets/{gadgetId}/config"
+      parameters:
+        - in: path
+          name: courseId
+          type: string
+          description: ID for the parent course
+          required: true
+        - in: path
+          name: gadgetId
+          type: string
+          description: Gadget ID
+          required: true
+        - in: header
+          name: SID
+          required: true
+          type: string
+          format: uuid
+          description: API integration key or user session
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '401':
+          description: Invalid credentials
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '403':
+          description: Permission denied
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/Error_View_Model'  
+                  
+  "/courses/{courseId}/lessons/{lessonId}/gadgets/{gadgetId}/userdata":
+    get:
+      tags:
+        - Gadget User Data
+      summary: Retrieve user data for a single gadget
+      description: >-
+        Gadget user data requests return the interactions of all users with a
+        particular gadget (e.g. user responses to a quiz).
+        
+        Returns a paginated result set.
+      parameters:
+        - in: path
+          name: courseId
+          type: string
+          required: true
+          description: ID for the parent course
+        - in: path
+          name: lessonId
+          description: ID for the parent lesson
+          type: string
+          required: true
+        - in: path
+          name: gadgetId
+          type: string
+          required: true
+          description: Gadget ID
+        - in: query
+          name: page
+          type: integer
+          required: false
+          description: View page of a paginated result set
+          default: 1
+        - in: query
+          name: perPage
+          type: integer
+          required: false
+          description: Set page size of a paginated result set
+          default: 20
+        - in: header
+          name: SID
+          required: true
+          type: string
+          format: uuid
+          description: API integration key or user session
+      responses:
+        '200':
+          description: OK
+          schema:
+              type: array
+              items:
+                $ref: '#/definitions/Gadget_User_Data_View_Model'
+          headers:
+            count:
+                type: integer
+                description: The total number of items available in the requested collection
+            page:
+                type: integer
+                description: The requested page number
+            pageCount:
+                type: integer
+                description: The number of pages available with the current perPage value
+            perPage:
+                type: integer
+                description: The requested number of items per page
+        '401':
+          description: Invalid credentials
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '403':
+          description: Permission denied
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/Error_View_Model'  
+definitions:
+  Base_Course_View_Model:
+    type: object
+    properties:
+      catalogs:  
+        type: array 
+        items:
+            type: string
+            enum: 
+                - sandbox
+                - labs
+        description: "Contains 'labs' if the course has been published"
+      courseId:
+        type: string
+        description: Duplicate of id.
+      coverImage:
+        type: object
+        description: Course cover image metadata. Omitted if the course does not have a cover image.
+      createdAt:
+        type: string
+        format: date
+        description: Course creation time
+      id:
+        type: string
+        description: Unique, API-generated course identifier
+      public:
+        type: boolean  
+        description: Indicates whether the course is publicly available
+      longDesc:
+        type: string
+        description: A paragraph statement describing the course. Omitted if not defined.
+      shortDesc: 
+        type: string
+        description: A summary statement of the course. Omitted if not defined.
+      tags:
+        type: array
+        items: 
+          type: string
+        description: A list of user-defined tags indicating course metadata
+      title:
+        type: string
+        description: Course title. Omitted if not defined.
+      users:
+        description: Lists users with rights to edit and/or publish the course
+        type: array
+        items:
+          $ref: '#/definitions/User_View_Model'
+  Error_View_Model:
+    type: object
+    properties:
+      error:
+        type: integer
+        description: HTTP error code
+      message:
+        type: string
+        description: Describes the error condition
+  Extended_Course_View_Model:
+    type: object
+    properties:
+      catalogs:  
+        type: array 
+        items:
+            type: string
+            enum: 
+                - sandbox
+                - labs
+        description: "Contains 'labs' if the course has been published"
+      courseId:
+        type: string
+        description: Duplicate of id.
+      coverImage:
+        type: object
+        description: Course cover image metadata. Omitted if the course does not have a cover image.
+      createdAt:
+        type: string
+        format: date
+        description: Course creation time
+      id:
+        type: string
+        description: Unique, API-generated course identifier
+      public:
+        type: boolean  
+        description: Indicates whether the course is publicly available
+      longDesc:
+        type: string
+        description: A paragraph statement describing the course. Omitted if not defined.
+      shortDesc: 
+        type: string
+        description: A summary statement of the course. Omitted if not defined.
+      tags:
+        type: array
+        items: 
+          type: string
+        description: A list of user-defined tags indicating course metadata
+      title:
+        type: string
+        description: Course title. Omitted if not defined.
+      users:
+        description: Lists users with rights to edit and/or publish the course
+        type: array
+        items:
+          $ref: '#/definitions/User_View_Model'
+      lastPublished:
+        type: string
+        format: date
+        description: Date of most recent course publication
+      lessons:
+        type: array
+        items:
+          $ref: '#/definitions/Lesson_View_Model'
+  Gadget_View_model:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Gadget identifier. Unique within a course.
+      type: 
+        type: string
+        description: Gadget type
+      config:
+        type: object
+        description: Schema varies by gadget type
+  Gadget_User_Data_View_Model:
+    type: object
+    properties:
+      user:
+        $ref: '#/definitions/User_View_Model'
+      state:
+        type: object
+        description: Schema varies by gadget type
+  Learner_Progress_View_Model:
+    type: object
+    properties:
+      completeDate: 
+          type: string
+          format: date
+          description: Date learner completed the course. Omitted if learner has not completed the course.
+      lastActivity: 
+          type: string
+          format: date
+          description: Date learner last visited the course
+      email:
+          type: string
+          format: email
+          description: Learner's email address. Omitted if not available.
+      courseCompleted:
+          type: boolean
+          description: Indicates whether learner has completed the course
+      firstname: 
+          type: string
+          description: Learner's given name. Omitted if not available.
+      currentLesson: 
+          type: integer
+          description: Index of last visited lesson
+      lastname:
+          type: string
+          description: Learner's family name. Omitted if not available.
+      id: 
+          type: string
+          description: Learner's user ID
+      fullname: 
+          type: string
+          description: Learner's full name. Omitted if not available.
+      title: 
+          type: string
+          description: Course title
+      startDate: 
+          type: string
+          format: date
+          description: Date learner started the course
+      currentLessonId: 
+          type: string
+          description: ID of last visited lesson
+  Lesson_View_Model:
+    type: object
+    properties:
+      id: 
+        type: string
+        description: Lesson identifier. Unique within a course.
+      title: 
+        type: string
+        description: Lesson title.
+      gadgets:
+        type: array
+        items:
+          $ref: '#/definitions/Gadget_View_model'
+  Member_View_Model:
+    type: object
+    properties:
+      id:
+        type: string
+        description: User API ID
+      firstname:
+        type: string
+        description: Given name
+      lastname:
+        type: string
+        description: Family name
+      fullname:
+        type: string
+        description: Full name
+      email:
+        type: string
+        format: email
+  Org_Member_View_Model:
+    type: object
+    properties:
+      user:
+        $ref: '#/definitions/Member_View_Model'
+      roles:
+        type: array
+        items:
+          type: string
+          enum:
+            - admin
+            - instructor
+            - learner
+  Org_User_Input_Model:
+    type: object
+    properties:
+      roles:
+        type: array
+        items:
+          type: string
+          enum:
+            - admin
+            - instructor
+            - learner
+      user:
+        $ref: '#/definitions/User_Input_Model'
+  Org_User_View_Model:
+    type: object
+    properties:
+      roles:
+        type: array
+        items:
+          type: string
+          enum:
+            - admin
+            - instructor
+            - learner
+      user:
+        $ref: '#/definitions/User_View_Model'
+  Role_Update_Input_Model:
+    type: object
+    properties:
+      roles:
+        type: array
+        items:
+          type: string
+          enum:
+            - admin
+            - instructor
+            - learner
+  Session_Input_Model:
+    type: object
+    properties:
+      userId:
+        type: string
+        example: '12345'
+        format: int64
+        description: Required if email is not given
+      email:
+        type: string
+        format: email
+        description: Required if userId is not given
+  Session_View_Model:
+    type: object
+    properties:
+      sessionId:
+        type: string
+        example: 28438e94-480d-11e3-95fd-ce3f5508acd9
+      user:
+        $ref: '#/definitions/User_View_Model'
+  User_Input_Model:
+    type: object
+    properties:
+      email:
+        type: string
+        format: email
+        description: Unique email address
+      firstname:
+        type: string
+        description: Given name
+      lastname:
+        type: string
+        description: Family name
+      fullname:
+        type: string
+        description: Full name
+      longDesc:
+        type: string
+        description: A paragraph about the user
+      shortDesc:
+        type: string
+        description: A brief statement about the user
+  User_Patch_Model:
+    type: object
+    properties:
+      firstname:
+        type: string
+        description: Given name
+      lastname:
+        type: string
+        description: Family name
+      fullname:
+        type: string
+        description: Full name
+      longDesc:
+        type: string
+        description: A paragraph about the user
+      shortDesc:
+        type: string
+        description: A brief statement about the user
+  User_View_Model:
+    type: object
+    properties:
+      id:
+        type: string
+        format: int64
+        description: Unique API-generated identifier
+      username:
+        type: string
+        description: 'A unique, human-readable user identifier'
+      email:
+        type: string
+        format: email
+        description: Unique email address
+      firstname:
+        type: string
+        description: Given name
+      lastname:
+        type: string
+        description: Family name
+      fullname:
+        type: string
+        description: Full name
+      fn:
+        type: string
+        description: Alternate full name
+      displayname:
+        type: string
+        description: A calculated display name based on available non-null name fields
+      longDesc:
+        type: string
+        description: A paragraph about the user
+      shortDesc:
+        type: string
+        description: A brief statement about the user
+      image:
+        type: object
+        description: Profile image asset metadata
+externalDocs:
+  description: Support
+  url: 'https://support.versal.com/'
