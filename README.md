@@ -459,7 +459,7 @@ Returns a paginated result set.
 | catalogs | [ string ] | Contains 'labs' if the course has been published |
 | courseId | string | Duplicate of id. |
 | coverImage | object | Course cover image metadata. Omitted if the course does not have a cover image. |
-| currentPosition | [Learner_Course_Position_View_Model](#Learner_Course_Position_View_Model) | Information about the session user's most recent course activity. Omitted if the user has not started the course or if the calling session is an API key. |
+| currentPosition | [Learner_Course_Position_View_Model](#Learner_Course_Position_View_Model) | Information about the session user's most recent course activity. Omitted if the user has not visited the course or if the calling session is an API key. |
 | createdAt | date | Course creation time |
 | id | string | Unique, API-generated course identifier |
 | public | boolean | Indicates whether the course is publicly available |
