@@ -459,11 +459,13 @@ Returns a paginated result set.
 | catalogs | [ string ] | Contains 'labs' if the course has been published |
 | courseId | string | Duplicate of id. |
 | coverImage | object | Course cover image metadata. Omitted if the course does not have a cover image. |
+| currentPosition | [Learner_Course_Position_View_Model](#Learner_Course_Position_View_Model) | Information about the session user's most recent course activity. Omitted if the user has not started the course or if the calling session is an API key. |
 | createdAt | date | Course creation time |
 | id | string | Unique, API-generated course identifier |
 | public | boolean | Indicates whether the course is publicly available |
 | longDesc | string | A paragraph statement describing the course. Omitted if not defined. |
 | shortDesc | string | A summary statement of the course. Omitted if not defined. |
+| status    | string | `"complete"` if the session user has completed the course. Omitted if the user has not completed the course or if the calling session is an API key.|
 | tags | [ string ] | A list of user-defined tags indicating course metadata |
 | title | string | Course title. Omitted if not defined. |
 | users | [ [User_View_Model](#user_view_model) ] | Lists users with rights to edit and/or publish the course |
@@ -484,6 +486,13 @@ Returns a paginated result set.
 | ---- | ---- | ----------- | 
 | user | [User_View_Model](#user_view_model) |  |
 | state | object | Schema varies by gadget type |
+
+### Learner_Course_Position_View_Model
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| currentLessonId | string | Learner's last visited lesson ID |
+| currentLessonIndex | integer | Learner's last visited lesson index |
+| updatedAt | date | Learner's last course visit date |
 
 ### Learner_Progress_View_Model  
 
