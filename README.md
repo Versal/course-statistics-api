@@ -160,6 +160,30 @@ This document is also available in [Swagger 2.0](versal-partner-api-swagger.yaml
 
 ### /orgs/{orgId}/users/{userId}
 ---
+##### ***DELETE***
+**Summary:** Remove a user from your organization
+
+**Description:** Removes the user from organization member lists. Revokes the user's permission to interact with resources in your organization. Removes the user's enrollment records for courses in your organization. Untracks the user from course learner reporting.
+
+**Parameters**
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| SID | header | API integration key | Yes | string (uuid) |
+| orgId | path | Your numeric organization ID | Yes | integer |
+| userId | path | The numeric user ID | Yes | integer |
+
+**Responses**
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | OK |  |
+| 400 | Bad request | [Error_View_Model](#error_view_model) |
+| 401 | Invalid credentials | [Error_View_Model](#error_view_model) |
+| 403 | Insufficient permissions | [Error_View_Model](#error_view_model) |
+| 404 | Org or User not found | [Error_View_Model](#error_view_model) |
+
+
 ##### ***PUT***
 **Summary:** Update a user's role in your organization
 
