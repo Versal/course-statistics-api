@@ -89,6 +89,32 @@ This document is also available in [Swagger 2.0](versal-partner-api-swagger.yaml
 
 ## Users
 
+### /orgs/{orgId}/delete_users
+---
+##### ***POST***
+**Summary:** Batch remove a list of users identified by user ID from your organization
+
+**Description:** See [DELETE /orgs/{orgId}/users/{userId}](#delete)
+
+**Parameters**
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| SID | header | API key | Yes | string (uuid) |
+| orgId | path |  | Yes | integer |
+| body | body |  | Yes | [Batch_Delete_Members_Input_Model](#batch_delete_members_input_model)
+
+**Responses**
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | OK |  |
+| 400 | Bad request | [Error_View_Model](#error_view_model) |
+| 401 | Invalid credentials | [Error_View_Model](#error_view_model) |
+| 403 | Insufficient permissions | [Error_View_Model](#error_view_model) |
+| 404 | Org or User not found | [Error_View_Model](#error_view_model) |
+
+
 ### /orgs/{orgId}/users
 ---
 ##### ***POST***
@@ -468,6 +494,12 @@ Returns a paginated result set.
 | tags | [ string ] | A list of user-defined tags indicating course metadata |
 | title | string | Course title. Omitted if not defined. |
 | users | [ [User_View_Model](#user_view_model) ] | Lists users with rights to edit and/or publish the course |
+
+### Batch_Delete_Members_Input_Model
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| users | [string] | List of user IDs |
 
 ### Error_View_Model  
 
