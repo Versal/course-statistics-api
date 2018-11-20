@@ -352,7 +352,7 @@ The published course revision is returned when the calling session does not have
 | SID | header | API integration key | Yes | string (uuid) |
 | courseId | path | Course where learner's progress will be tracked | Yes | string |
 | userId | path | Learner's user ID | Yes | string |
-| body | body | Toggles learner tracking for the user | Yes | [User_Tracking_Model](#user_tracking_model) |
+| body | body | Toggles learner tracking for the user | Yes | [User_Tracking_Input_Model](#user_tracking_input_model) |
 
 **Responses**
 
@@ -647,7 +647,7 @@ Returns a paginated result set.
 | longDesc | string | A paragraph about the user | No |
 | shortDesc | string | A brief statement about the user | No |
 
-### User_Tracking_Model
+### User_Tracking_Input_Model
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
