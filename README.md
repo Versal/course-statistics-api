@@ -1,6 +1,9 @@
 Versal Partner API
 ==================
 The Versal Partner API enables organizations to manage users, courses, and performance metrics from applications built on top of the Versal Platform.
+
+To get started, try out our interactive [API demo](https://versal.com/learn/dgy8ia/lessons/1).
+
 # Concepts
 ## API Keys
 API keys grant broad access to organization data on Versal. Among other operations, they can be used to:
@@ -57,7 +60,7 @@ https://versal.com/terms
 
 [Contact Versal Support](https://support.versal.com/)
 
-This document is also available in [Swagger 2.0](versal-partner-api-swagger.yaml) format.
+This document is also available in [Swagger 2.0](versal-partner-api-swagger.yaml) format. 
 
 # Endpoints
 

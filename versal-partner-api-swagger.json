@@ -1,0 +1,1683 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "The Versal Partner API enables organizations to manage users, courses, and performance metrics from applications built on top of the Versal Platform.\n# Concepts\n## API Keys\nAPI keys grant broad access to organization data on Versal. Among other operations, they can be used to:\n- create and modify organization users\n- create sessions for organization users\n- retrieve organizational courses\n- retrieve learner metrics\n\nIf your existing organization has not received an API key, please [contact Versal support](https://support.versal.com) and we will issue one. If you have not yet registered with Versal, [sign up for a free trial](https://versal.com/trial/business) to receive your API key.\n## User Sessions\nUser sessions grant a single user restricted access to organization resources. They can be used to retrieve, launch, and consume content using the Versal Course Player.\n## User Roles\nUsers are assigned a role within your organization.\n\n  | Role        | Description           | \n  | ------------- |---------------| \n  | admin|  Admins have full control over all of the resources within the organization. They can add and remove users from the organization, manage user roles, edit and manage courses, and view course analytics.\n  | instructor|  Instructors can view any course shared with the organization, create and manage their own courses, invite learners to courses, and view course analytics.\n  | learner|  Learners can enroll in any course shared with the organization.\n\n\n## Versal Course Player\nThe Versal Course Player is a browser-based runtime for Versal course content. An overview of its usage and API is available [here](https://support.versal.com/hc/en-us/articles/203271866-Embedding-organizational-courses).\n# Topics\n## Requests\nAll requests and responses reference the Versal Partner API available at: https://stack.versal.com/api2. Requests must be made over HTTPS; requests over standard HTTP will be redirected to the corresponding HTTPS endpoint.\n## Authentication\nAll requests to the Versal API must include an SID header with a valid API key or user session ID. If your organization has not received an API key, please please [contact Versal support](https://support.versal.com) and we will issue one.\n\n``` curl -H 'SID: YOUR_API_KEY' https://stack.versal.com/api2/courses/123  ```\n## Pagination\nAll responses for collections of resources return a subset of the collection and an X-Pagination header describing the total volume of resources available. The body of the header is a JSON object containing pagination information:\n\n``` X-Pagination: {\"count\":3737,\"page\":1,\"nextPage\":2,\"perPage\":20,\"pageCount\":187} ```\n\nSubsequent pages from the collection endpoint may be retrieved by setting the page query parameter:\n``` curl https://stack.versal.com/api2/courses/123/userdata?page=2 -H 'SID: YOUR_API_KEY' ```",
+    "version" : "1.0",
+    "title" : "Versal Partner API",
+    "termsOfService" : "https://versal.com/terms"
+  },
+  "host" : "stack.versal.com",
+  "basePath" : "/api2",
+  "tags" : [ {
+    "name" : "Sessions",
+    "description" : "Create learner API sessions to view and interact with content in your organization"
+  }, {
+    "name" : "Users",
+    "description" : "Create and manage learners in your organization"
+  }, {
+    "name" : "Courses",
+    "description" : "Course content including metadata, lessons, and gadgets"
+  }, {
+    "name" : "Course Learners",
+    "description" : "Track and view progress for course learners"
+  }, {
+    "name" : "Gadget Configurations",
+    "description" : "Gadget configurations include all user-defined metadata (e.g. the title and questions of a survey) attached to a particular gadget."
+  }, {
+    "name" : "Gadget User Data",
+    "description" : "Gadget user data requests return the interactions of all users with a particular gadget (e.g. user responses to a survey)"
+  } ],
+  "schemes" : [ "https" ],
+  "paths" : {
+    "/sessions" : {
+      "post" : {
+        "tags" : [ "Sessions" ],
+        "summary" : "Add a new user API session",
+        "description" : "User sessions include the SID needed to launch the Versal Course Player. User sessions have a 30-day lifetime. The session lifetime is refreshed with every use.",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "SID",
+          "in" : "header",
+          "description" : "API key",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "description" : "Indicates the session owner user",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/Session_Input_Model"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Session created",
+            "schema" : {
+              "$ref" : "#/definitions/Session_View_Model"
+            }
+          },
+          "400" : {
+            "description" : "Bad request",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "401" : {
+            "description" : "Invalid credentials",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "403" : {
+            "description" : "Insufficient permissions",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "404" : {
+            "description" : "User not found",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          }
+        }
+      }
+    },
+    "/orgs/{orgId}/users" : {
+      "post" : {
+        "tags" : [ "Users" ],
+        "summary" : "Add a new user to your organization with a role",
+        "description" : "Add a new user to your organization with a role",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "SID",
+          "in" : "header",
+          "description" : "API key",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
+        }, {
+          "name" : "orgId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer"
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/Org_User_Input_Model"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "User created",
+            "schema" : {
+              "$ref" : "#/definitions/Org_User_View_Model"
+            }
+          },
+          "400" : {
+            "description" : "Bad request",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "401" : {
+            "description" : "Invalid credentials",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "403" : {
+            "description" : "Permission denied",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          }
+        }
+      }
+    },
+    "/user" : {
+      "get" : {
+        "tags" : [ "Users" ],
+        "summary" : "Retrieve the user associated with this SID",
+        "description" : "Retrieve the user associated with this SID",
+        "parameters" : [ {
+          "name" : "SID",
+          "in" : "header",
+          "description" : "The session ID for the user of interest",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/User_View_Model"
+            }
+          },
+          "401" : {
+            "description" : "Invalid credentials",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          }
+        }
+      }
+    },
+    "/users/{userId}" : {
+      "put" : {
+        "tags" : [ "Users" ],
+        "summary" : "Update a user record",
+        "description" : "Both API keys and user session IDs may be used to modify existing users. Note that the PUT verb in this instances behaves as a PATCH: attributes omitted in an update request will simply be ignored by the server.",
+        "parameters" : [ {
+          "name" : "SID",
+          "in" : "header",
+          "description" : "API integration key or session belonging to the user of interest",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
+        }, {
+          "name" : "userId",
+          "in" : "path",
+          "description" : "Numeric user ID",
+          "required" : true,
+          "type" : "integer"
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/User_Patch_Model"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/User_View_Model"
+            }
+          },
+          "400" : {
+            "description" : "Bad request",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "401" : {
+            "description" : "Invalid credentials",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "403" : {
+            "description" : "Insufficient permissions",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "404" : {
+            "description" : "User not found",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          }
+        }
+      }
+    },
+    "/orgs/{orgId}/users/{userId}" : {
+      "put" : {
+        "tags" : [ "Users" ],
+        "summary" : "Update a user's role in your organization",
+        "description" : "Change or remove a user's role within your organization",
+        "parameters" : [ {
+          "name" : "SID",
+          "in" : "header",
+          "description" : "API integration key",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
+        }, {
+          "name" : "orgId",
+          "in" : "path",
+          "description" : "Your numeric organization ID",
+          "required" : true,
+          "type" : "integer"
+        }, {
+          "name" : "userId",
+          "in" : "path",
+          "description" : "The numeric user ID",
+          "required" : true,
+          "type" : "integer"
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "description" : "Describes user's updated role",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/Role_Update_Input_Model"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "object",
+              "properties" : { }
+            }
+          },
+          "400" : {
+            "description" : "Bad request",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "401" : {
+            "description" : "Invalid credentials",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "403" : {
+            "description" : "Insufficient permissions",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "404" : {
+            "description" : "Org or User not found",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          }
+        }
+      }
+    },
+    "/orgs/{orgId}/members" : {
+      "get" : {
+        "tags" : [ "Users" ],
+        "summary" : "List users in your organization",
+        "description" : "The organization member listing displays users in your organization and their assigned role. Users that are part of the organization but have not been assigned a role are shown with an empty roles:[] record. \nReturns a paginated result set.",
+        "parameters" : [ {
+          "name" : "SID",
+          "in" : "header",
+          "description" : "API integration key",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
+        }, {
+          "name" : "orgId",
+          "in" : "path",
+          "description" : "Your numeric organization ID",
+          "required" : true,
+          "type" : "integer"
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "View page of a paginated result set",
+          "required" : false,
+          "type" : "integer",
+          "default" : 1
+        }, {
+          "name" : "perPage",
+          "in" : "query",
+          "description" : "Set page size of a paginated result set",
+          "required" : false,
+          "type" : "integer",
+          "default" : 20
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/Org_Member_View_Model"
+              }
+            },
+            "headers" : {
+              "count" : {
+                "type" : "integer",
+                "description" : "The total number of items available in the requested collection"
+              },
+              "page" : {
+                "type" : "integer",
+                "description" : "The requested page number"
+              },
+              "pageCount" : {
+                "type" : "integer",
+                "description" : "The number of pages available with the current perPage value"
+              },
+              "perPage" : {
+                "type" : "integer",
+                "description" : "The requested number of items per page"
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad request",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "401" : {
+            "description" : "Invalid credentials",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "403" : {
+            "description" : "Insufficient permissions",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "404" : {
+            "description" : "Org not found",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          }
+        }
+      }
+    },
+    "/courses" : {
+      "get" : {
+        "tags" : [ "Courses" ],
+        "summary" : "List available courses",
+        "description" : "Lists courses available to the calling session. \nPublished course revisions are returned when the calling session does not have edit rights for the course. In-edit (sandbox) course revisions are returned when the calling session has edit rights for the course.\nReturns a paginated result set.",
+        "parameters" : [ {
+          "name" : "SID",
+          "in" : "header",
+          "description" : "API integration key or user session ID",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
+        }, {
+          "name" : "title",
+          "in" : "query",
+          "description" : "Filter for courses with title containing this string (case insensitive)",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "author",
+          "in" : "query",
+          "description" : "Filter for courses where the given user ID has permission to edit and/or publish the course",
+          "required" : false,
+          "type" : "integer"
+        }, {
+          "name" : "catalog",
+          "in" : "query",
+          "description" : "Filter for courses that are published (\"labs\") or unpublished (\"sandbox\")",
+          "required" : false,
+          "type" : "string",
+          "enum" : [ "labs", "sandbox" ]
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "View page of a paginated result set",
+          "required" : false,
+          "type" : "integer",
+          "default" : 1
+        }, {
+          "name" : "perPage",
+          "in" : "query",
+          "description" : "Set page size of a paginated result set",
+          "required" : false,
+          "type" : "integer",
+          "default" : 20
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/Base_Course_View_Model"
+              }
+            },
+            "headers" : {
+              "count" : {
+                "type" : "integer",
+                "description" : "The total number of items available in the requested collection"
+              },
+              "page" : {
+                "type" : "integer",
+                "description" : "The requested page number"
+              },
+              "pageCount" : {
+                "type" : "integer",
+                "description" : "The number of pages available with the current perPage value"
+              },
+              "perPage" : {
+                "type" : "integer",
+                "description" : "The requested number of items per page"
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad request",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "401" : {
+            "description" : "Invalid credentials",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          }
+        }
+      }
+    },
+    "/courses/{courseId}" : {
+      "get" : {
+        "tags" : [ "Courses" ],
+        "summary" : "Retrieve content and metadata of a course",
+        "description" : "Deep course requests (?depth=full) retrieve the complete content of a course. These requests expose the lesson and gadget IDs required by subsequent requests.\nThe published course revision is returned when the calling session does not have edit rights for the course. The in-edit (sandbox) course revision is returned when the calling session has edit rights for the course. To request the published course revision with a privileged session, use \"GET /catalogs/staged/courses/{courseId}\"",
+        "parameters" : [ {
+          "name" : "SID",
+          "in" : "header",
+          "description" : "API integration key or user session ID",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
+        }, {
+          "name" : "courseId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "depth",
+          "in" : "query",
+          "description" : "Depth \"full\" returns all course lessons and gadgets. Depth \"lessons\" returns course lessons only and omits the lesson.gadget[] arrays.",
+          "required" : false,
+          "type" : "string",
+          "enum" : [ "full", "lessons" ]
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/Extended_Course_View_Model"
+            }
+          },
+          "401" : {
+            "description" : "Invalid credentials",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "403" : {
+            "description" : "Permission denied",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "404" : {
+            "description" : "Not found",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          }
+        }
+      }
+    },
+    "/catalogs/staged/courses/{courseId}" : {
+      "get" : {
+        "tags" : [ "Courses" ],
+        "summary" : "Request the published revision of the given Course. See \"GET /courses/{courseId}\"",
+        "parameters" : [ {
+          "name" : "courseId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/Extended_Course_View_Model"
+            }
+          },
+          "401" : {
+            "description" : "Invalid credentials",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "403" : {
+            "description" : "Permission denied",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "404" : {
+            "description" : "Not found",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          }
+        }
+      }
+    },
+    "/courses/{courseId}/users/{userId}" : {
+      "patch" : {
+        "tags" : [ "Course Learners" ],
+        "summary" : "Mark a learner as tracked for a course",
+        "description" : "Tracking a user within a course will include that learner's progress in subsequent course progress reports.",
+        "parameters" : [ {
+          "name" : "SID",
+          "in" : "header",
+          "description" : "API integration key",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
+        }, {
+          "name" : "courseId",
+          "in" : "path",
+          "description" : "Course where learner's progress will be tracked",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "userId",
+          "in" : "path",
+          "description" : "Learner's user ID",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "description" : "Toggles learner tracking for the user",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/body"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_200"
+            }
+          },
+          "400" : {
+            "description" : "Bad request",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "401" : {
+            "description" : "Invalid credentials",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "403" : {
+            "description" : "Permission denied",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "404" : {
+            "description" : "Not found",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          }
+        }
+      }
+    },
+    "/courses/{courseId}/userdata" : {
+      "get" : {
+        "tags" : [ "Course Learners" ],
+        "summary" : "Retrieve learner progress summaries for a course",
+        "description" : "Learner progress requests retrieve a summary of the progress of all users enrolled in a specific course.\nReturns a paginated result set.",
+        "parameters" : [ {
+          "name" : "SID",
+          "in" : "header",
+          "description" : "API integration key",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
+        }, {
+          "name" : "courseId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "View page of a paginated result set",
+          "required" : false,
+          "type" : "integer",
+          "default" : 1
+        }, {
+          "name" : "perPage",
+          "in" : "query",
+          "description" : "Set page size of a paginated result set",
+          "required" : false,
+          "type" : "integer",
+          "default" : 20
+        }, {
+          "name" : "userIds",
+          "in" : "query",
+          "description" : "Comma-separated list of user IDs. Results will be filtered to users in this list.",
+          "required" : false,
+          "type" : "string",
+          "format" : "CSV"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/Learner_Progress_View_Model"
+            },
+            "headers" : {
+              "count" : {
+                "type" : "integer",
+                "description" : "The total number of items available in the requested collection"
+              },
+              "page" : {
+                "type" : "integer",
+                "description" : "The requested page number"
+              },
+              "pageCount" : {
+                "type" : "integer",
+                "description" : "The number of pages available with the current perPage value"
+              },
+              "perPage" : {
+                "type" : "integer",
+                "description" : "The requested number of items per page"
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad request",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "401" : {
+            "description" : "Invalid credentials",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "403" : {
+            "description" : "Permission denied",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "404" : {
+            "description" : "Not found",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          }
+        }
+      }
+    },
+    "/courses/{courseId}/gadgets/{gadgetId}/config" : {
+      "get" : {
+        "tags" : [ "Gadget Configurations" ],
+        "summary" : "Retrieve the configuration for a single gadget",
+        "description" : "Gadget configurations include all user-defined metadata (e.g. the title and questions of a survey) attached to a particular gadget. Schema varies by gadget type.\nWhen the calling session belongs to any client with edit permissions on the parent course, the in-edit (sandbox) version of the gadget configuration is returned. When the calling session belongs to a client without edit permissions on the course, the published version of the gadget configuration is returned. \nWhen the calling session belongs to a user with edit permissions on the parent course, the response will include the gadget's private fields (e.g., the answer key for a quiz gadget). For all other calling session types, gadget private fields will be redacted from the response.",
+        "parameters" : [ {
+          "name" : "courseId",
+          "in" : "path",
+          "description" : "ID for the course containing the gadget",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "gadgetId",
+          "in" : "path",
+          "description" : "Gadget ID",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "SID",
+          "in" : "header",
+          "description" : "API integration key or user session",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "object",
+              "properties" : { }
+            }
+          },
+          "401" : {
+            "description" : "Invalid credentials",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "403" : {
+            "description" : "Permission denied",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "404" : {
+            "description" : "Not found",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          }
+        }
+      }
+    },
+    "/catalogs/staged/courses/{courseId}/gadgets/{gadgetId}/config" : {
+      "get" : {
+        "tags" : [ "Gadget Configurations" ],
+        "summary" : "Retrieve the published version of the configuration for a single gadget",
+        "description" : "See \"GET /courses/{courseId}/gadgets/{gadgetId}/config\"",
+        "parameters" : [ {
+          "name" : "courseId",
+          "in" : "path",
+          "description" : "ID for the parent course",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "gadgetId",
+          "in" : "path",
+          "description" : "Gadget ID",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "SID",
+          "in" : "header",
+          "description" : "API integration key or user session",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "object",
+              "properties" : { }
+            }
+          },
+          "401" : {
+            "description" : "Invalid credentials",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "403" : {
+            "description" : "Permission denied",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "404" : {
+            "description" : "Not found",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          }
+        }
+      }
+    },
+    "/courses/{courseId}/lessons/{lessonId}/gadgets/{gadgetId}/userdata" : {
+      "get" : {
+        "tags" : [ "Gadget User Data" ],
+        "summary" : "Retrieve user data for a single gadget",
+        "description" : "Gadget user data requests return the interactions of all users with a particular gadget (e.g. user responses to a quiz).\nReturns a paginated result set.",
+        "parameters" : [ {
+          "name" : "courseId",
+          "in" : "path",
+          "description" : "ID for the parent course",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "lessonId",
+          "in" : "path",
+          "description" : "ID for the parent lesson",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "gadgetId",
+          "in" : "path",
+          "description" : "Gadget ID",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "View page of a paginated result set",
+          "required" : false,
+          "type" : "integer",
+          "default" : 1
+        }, {
+          "name" : "perPage",
+          "in" : "query",
+          "description" : "Set page size of a paginated result set",
+          "required" : false,
+          "type" : "integer",
+          "default" : 20
+        }, {
+          "name" : "SID",
+          "in" : "header",
+          "description" : "API integration key or user session",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/Gadget_User_Data_View_Model"
+              }
+            },
+            "headers" : {
+              "count" : {
+                "type" : "integer",
+                "description" : "The total number of items available in the requested collection"
+              },
+              "page" : {
+                "type" : "integer",
+                "description" : "The requested page number"
+              },
+              "pageCount" : {
+                "type" : "integer",
+                "description" : "The number of pages available with the current perPage value"
+              },
+              "perPage" : {
+                "type" : "integer",
+                "description" : "The requested number of items per page"
+              }
+            }
+          },
+          "401" : {
+            "description" : "Invalid credentials",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "403" : {
+            "description" : "Permission denied",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          },
+          "404" : {
+            "description" : "Not found",
+            "schema" : {
+              "$ref" : "#/definitions/Error_View_Model"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "Base_Course_View_Model" : {
+      "type" : "object",
+      "properties" : {
+        "catalogs" : {
+          "type" : "array",
+          "description" : "Contains 'labs' if the course has been published",
+          "items" : {
+            "type" : "string",
+            "enum" : [ "sandbox", "labs" ]
+          }
+        },
+        "courseId" : {
+          "type" : "string",
+          "description" : "Duplicate of id."
+        },
+        "coverImage" : {
+          "type" : "object",
+          "description" : "Course cover image metadata. Omitted if the course does not have a cover image.",
+          "properties" : { }
+        },
+        "createdAt" : {
+          "type" : "string",
+          "format" : "date",
+          "description" : "Course creation time"
+        },
+        "id" : {
+          "type" : "string",
+          "description" : "Unique, API-generated course identifier"
+        },
+        "public" : {
+          "type" : "boolean",
+          "description" : "Indicates whether the course is publicly available"
+        },
+        "longDesc" : {
+          "type" : "string",
+          "description" : "A paragraph statement describing the course. Omitted if not defined."
+        },
+        "shortDesc" : {
+          "type" : "string",
+          "description" : "A summary statement of the course. Omitted if not defined."
+        },
+        "tags" : {
+          "type" : "array",
+          "description" : "A list of user-defined tags indicating course metadata",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "title" : {
+          "type" : "string",
+          "description" : "Course title. Omitted if not defined."
+        },
+        "users" : {
+          "type" : "array",
+          "description" : "Lists users with rights to edit and/or publish the course",
+          "items" : {
+            "$ref" : "#/definitions/User_View_Model"
+          }
+        }
+      },
+      "example" : {
+        "createdAt" : "2000-01-23",
+        "public" : true,
+        "catalogs" : [ "sandbox", "sandbox" ],
+        "coverImage" : "{}",
+        "shortDesc" : "shortDesc",
+        "id" : "id",
+        "title" : "title",
+        "courseId" : "courseId",
+        "longDesc" : "longDesc",
+        "users" : [ {
+          "image" : "{}",
+          "firstname" : "firstname",
+          "displayname" : "displayname",
+          "fn" : "fn",
+          "shortDesc" : "shortDesc",
+          "id" : "id",
+          "fullname" : "fullname",
+          "email" : "email",
+          "longDesc" : "longDesc",
+          "username" : "username",
+          "lastname" : "lastname"
+        }, {
+          "image" : "{}",
+          "firstname" : "firstname",
+          "displayname" : "displayname",
+          "fn" : "fn",
+          "shortDesc" : "shortDesc",
+          "id" : "id",
+          "fullname" : "fullname",
+          "email" : "email",
+          "longDesc" : "longDesc",
+          "username" : "username",
+          "lastname" : "lastname"
+        } ],
+        "tags" : [ "tags", "tags" ]
+      }
+    },
+    "Error_View_Model" : {
+      "type" : "object",
+      "properties" : {
+        "error" : {
+          "type" : "integer",
+          "description" : "HTTP error code"
+        },
+        "message" : {
+          "type" : "string",
+          "description" : "Describes the error condition"
+        }
+      }
+    },
+    "Extended_Course_View_Model" : {
+      "type" : "object",
+      "properties" : {
+        "catalogs" : {
+          "type" : "array",
+          "description" : "Contains 'labs' if the course has been published",
+          "items" : {
+            "type" : "string",
+            "enum" : [ "sandbox", "labs" ]
+          }
+        },
+        "courseId" : {
+          "type" : "string",
+          "description" : "Duplicate of id."
+        },
+        "coverImage" : {
+          "type" : "object",
+          "description" : "Course cover image metadata. Omitted if the course does not have a cover image.",
+          "properties" : { }
+        },
+        "createdAt" : {
+          "type" : "string",
+          "format" : "date",
+          "description" : "Course creation time"
+        },
+        "id" : {
+          "type" : "string",
+          "description" : "Unique, API-generated course identifier"
+        },
+        "public" : {
+          "type" : "boolean",
+          "description" : "Indicates whether the course is publicly available"
+        },
+        "longDesc" : {
+          "type" : "string",
+          "description" : "A paragraph statement describing the course. Omitted if not defined."
+        },
+        "shortDesc" : {
+          "type" : "string",
+          "description" : "A summary statement of the course. Omitted if not defined."
+        },
+        "tags" : {
+          "type" : "array",
+          "description" : "A list of user-defined tags indicating course metadata",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "title" : {
+          "type" : "string",
+          "description" : "Course title. Omitted if not defined."
+        },
+        "users" : {
+          "type" : "array",
+          "description" : "Lists users with rights to edit and/or publish the course",
+          "items" : {
+            "$ref" : "#/definitions/User_View_Model"
+          }
+        },
+        "lastPublished" : {
+          "type" : "string",
+          "format" : "date",
+          "description" : "Date of most recent course publication"
+        },
+        "lessons" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Lesson_View_Model"
+          }
+        }
+      },
+      "example" : {
+        "lastPublished" : "2000-01-23",
+        "title" : "title",
+        "users" : [ {
+          "image" : "{}",
+          "firstname" : "firstname",
+          "displayname" : "displayname",
+          "fn" : "fn",
+          "shortDesc" : "shortDesc",
+          "id" : "id",
+          "fullname" : "fullname",
+          "email" : "email",
+          "longDesc" : "longDesc",
+          "username" : "username",
+          "lastname" : "lastname"
+        }, {
+          "image" : "{}",
+          "firstname" : "firstname",
+          "displayname" : "displayname",
+          "fn" : "fn",
+          "shortDesc" : "shortDesc",
+          "id" : "id",
+          "fullname" : "fullname",
+          "email" : "email",
+          "longDesc" : "longDesc",
+          "username" : "username",
+          "lastname" : "lastname"
+        } ],
+        "tags" : [ "tags", "tags" ],
+        "createdAt" : "2000-01-23",
+        "public" : true,
+        "catalogs" : [ "sandbox", "sandbox" ],
+        "coverImage" : "{}",
+        "shortDesc" : "shortDesc",
+        "id" : "id",
+        "courseId" : "courseId",
+        "longDesc" : "longDesc",
+        "lessons" : [ {
+          "id" : "id",
+          "title" : "title",
+          "gadgets" : [ {
+            "id" : "id",
+            "type" : "type",
+            "config" : "{}"
+          }, {
+            "id" : "id",
+            "type" : "type",
+            "config" : "{}"
+          } ]
+        }, {
+          "id" : "id",
+          "title" : "title",
+          "gadgets" : [ {
+            "id" : "id",
+            "type" : "type",
+            "config" : "{}"
+          }, {
+            "id" : "id",
+            "type" : "type",
+            "config" : "{}"
+          } ]
+        } ]
+      }
+    },
+    "Gadget_View_model" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "description" : "Gadget identifier. Unique within a course."
+        },
+        "type" : {
+          "type" : "string",
+          "description" : "Gadget type"
+        },
+        "config" : {
+          "type" : "object",
+          "description" : "Schema varies by gadget type",
+          "properties" : { }
+        }
+      },
+      "example" : {
+        "id" : "id",
+        "type" : "type",
+        "config" : "{}"
+      }
+    },
+    "Gadget_User_Data_View_Model" : {
+      "type" : "object",
+      "properties" : {
+        "user" : {
+          "$ref" : "#/definitions/User_View_Model"
+        },
+        "state" : {
+          "type" : "object",
+          "description" : "Schema varies by gadget type",
+          "properties" : { }
+        }
+      },
+      "example" : {
+        "state" : "{}",
+        "user" : {
+          "image" : "{}",
+          "firstname" : "firstname",
+          "displayname" : "displayname",
+          "fn" : "fn",
+          "shortDesc" : "shortDesc",
+          "id" : "id",
+          "fullname" : "fullname",
+          "email" : "email",
+          "longDesc" : "longDesc",
+          "username" : "username",
+          "lastname" : "lastname"
+        }
+      }
+    },
+    "Learner_Progress_View_Model" : {
+      "type" : "object",
+      "properties" : {
+        "completeDate" : {
+          "type" : "string",
+          "format" : "date",
+          "description" : "Date learner completed the course. Omitted if learner has not completed the course."
+        },
+        "lastActivity" : {
+          "type" : "string",
+          "format" : "date",
+          "description" : "Date learner last visited the course"
+        },
+        "email" : {
+          "type" : "string",
+          "format" : "email",
+          "description" : "Learner's email address. Omitted if not available."
+        },
+        "courseCompleted" : {
+          "type" : "boolean",
+          "description" : "Indicates whether learner has completed the course"
+        },
+        "firstname" : {
+          "type" : "string",
+          "description" : "Learner's given name. Omitted if not available."
+        },
+        "currentLesson" : {
+          "type" : "integer",
+          "description" : "Index of last visited lesson"
+        },
+        "lastname" : {
+          "type" : "string",
+          "description" : "Learner's family name. Omitted if not available."
+        },
+        "id" : {
+          "type" : "string",
+          "description" : "Learner's user ID"
+        },
+        "fullname" : {
+          "type" : "string",
+          "description" : "Learner's full name. Omitted if not available."
+        },
+        "title" : {
+          "type" : "string",
+          "description" : "Course title"
+        },
+        "startDate" : {
+          "type" : "string",
+          "format" : "date",
+          "description" : "Date learner started the course"
+        },
+        "currentLessonId" : {
+          "type" : "string",
+          "description" : "ID of last visited lesson"
+        }
+      },
+      "example" : {
+        "currentLesson" : 0,
+        "firstname" : "firstname",
+        "currentLessonId" : "currentLessonId",
+        "lastActivity" : "2000-01-23",
+        "courseCompleted" : true,
+        "id" : "id",
+        "fullname" : "fullname",
+        "title" : "title",
+        "email" : "email",
+        "startDate" : "2000-01-23",
+        "completeDate" : "2000-01-23",
+        "lastname" : "lastname"
+      }
+    },
+    "Lesson_View_Model" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "description" : "Lesson identifier. Unique within a course."
+        },
+        "title" : {
+          "type" : "string",
+          "description" : "Lesson title."
+        },
+        "gadgets" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Gadget_View_model"
+          }
+        }
+      },
+      "example" : {
+        "id" : "id",
+        "title" : "title",
+        "gadgets" : [ {
+          "id" : "id",
+          "type" : "type",
+          "config" : "{}"
+        }, {
+          "id" : "id",
+          "type" : "type",
+          "config" : "{}"
+        } ]
+      }
+    },
+    "Member_View_Model" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "description" : "User API ID"
+        },
+        "firstname" : {
+          "type" : "string",
+          "description" : "Given name"
+        },
+        "lastname" : {
+          "type" : "string",
+          "description" : "Family name"
+        },
+        "fullname" : {
+          "type" : "string",
+          "description" : "Full name"
+        },
+        "email" : {
+          "type" : "string",
+          "format" : "email"
+        }
+      },
+      "example" : {
+        "firstname" : "firstname",
+        "id" : "id",
+        "fullname" : "fullname",
+        "email" : "email",
+        "lastname" : "lastname"
+      }
+    },
+    "Org_Member_View_Model" : {
+      "type" : "object",
+      "properties" : {
+        "user" : {
+          "$ref" : "#/definitions/Member_View_Model"
+        },
+        "roles" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "enum" : [ "admin", "instructor", "learner" ]
+          }
+        }
+      },
+      "example" : {
+        "roles" : [ "admin", "admin" ],
+        "user" : {
+          "firstname" : "firstname",
+          "id" : "id",
+          "fullname" : "fullname",
+          "email" : "email",
+          "lastname" : "lastname"
+        }
+      }
+    },
+    "Org_User_Input_Model" : {
+      "type" : "object",
+      "properties" : {
+        "roles" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "enum" : [ "admin", "instructor", "learner" ]
+          }
+        },
+        "user" : {
+          "$ref" : "#/definitions/User_Input_Model"
+        }
+      },
+      "example" : {
+        "roles" : [ "admin", "admin" ],
+        "user" : {
+          "firstname" : "firstname",
+          "shortDesc" : "shortDesc",
+          "fullname" : "fullname",
+          "email" : "email",
+          "longDesc" : "longDesc",
+          "lastname" : "lastname"
+        }
+      }
+    },
+    "Org_User_View_Model" : {
+      "type" : "object",
+      "properties" : {
+        "roles" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "enum" : [ "admin", "instructor", "learner" ]
+          }
+        },
+        "user" : {
+          "$ref" : "#/definitions/User_View_Model"
+        }
+      },
+      "example" : {
+        "roles" : [ "admin", "admin" ],
+        "user" : {
+          "image" : "{}",
+          "firstname" : "firstname",
+          "displayname" : "displayname",
+          "fn" : "fn",
+          "shortDesc" : "shortDesc",
+          "id" : "id",
+          "fullname" : "fullname",
+          "email" : "email",
+          "longDesc" : "longDesc",
+          "username" : "username",
+          "lastname" : "lastname"
+        }
+      }
+    },
+    "Role_Update_Input_Model" : {
+      "type" : "object",
+      "properties" : {
+        "roles" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "enum" : [ "admin", "instructor", "learner" ]
+          }
+        }
+      },
+      "example" : {
+        "roles" : [ "admin", "admin" ]
+      }
+    },
+    "Session_Input_Model" : {
+      "type" : "object",
+      "properties" : {
+        "userId" : {
+          "type" : "string",
+          "format" : "int64",
+          "example" : "12345",
+          "description" : "Required if email is not given"
+        },
+        "email" : {
+          "type" : "string",
+          "format" : "email",
+          "description" : "Required if userId is not given"
+        }
+      },
+      "example" : {
+        "userId" : "12345",
+        "email" : "email"
+      }
+    },
+    "Session_View_Model" : {
+      "type" : "object",
+      "properties" : {
+        "sessionId" : {
+          "type" : "string",
+          "example" : "28438e94-480d-11e3-95fd-ce3f5508acd9"
+        },
+        "user" : {
+          "$ref" : "#/definitions/User_View_Model"
+        }
+      },
+      "example" : {
+        "sessionId" : "28438e94-480d-11e3-95fd-ce3f5508acd9",
+        "user" : {
+          "image" : "{}",
+          "firstname" : "firstname",
+          "displayname" : "displayname",
+          "fn" : "fn",
+          "shortDesc" : "shortDesc",
+          "id" : "id",
+          "fullname" : "fullname",
+          "email" : "email",
+          "longDesc" : "longDesc",
+          "username" : "username",
+          "lastname" : "lastname"
+        }
+      }
+    },
+    "User_Input_Model" : {
+      "type" : "object",
+      "properties" : {
+        "email" : {
+          "type" : "string",
+          "format" : "email",
+          "description" : "Unique email address"
+        },
+        "firstname" : {
+          "type" : "string",
+          "description" : "Given name"
+        },
+        "lastname" : {
+          "type" : "string",
+          "description" : "Family name"
+        },
+        "fullname" : {
+          "type" : "string",
+          "description" : "Full name"
+        },
+        "longDesc" : {
+          "type" : "string",
+          "description" : "A paragraph about the user"
+        },
+        "shortDesc" : {
+          "type" : "string",
+          "description" : "A brief statement about the user"
+        }
+      },
+      "example" : {
+        "firstname" : "firstname",
+        "shortDesc" : "shortDesc",
+        "fullname" : "fullname",
+        "email" : "email",
+        "longDesc" : "longDesc",
+        "lastname" : "lastname"
+      }
+    },
+    "User_Patch_Model" : {
+      "type" : "object",
+      "properties" : {
+        "firstname" : {
+          "type" : "string",
+          "description" : "Given name"
+        },
+        "lastname" : {
+          "type" : "string",
+          "description" : "Family name"
+        },
+        "fullname" : {
+          "type" : "string",
+          "description" : "Full name"
+        },
+        "longDesc" : {
+          "type" : "string",
+          "description" : "A paragraph about the user"
+        },
+        "shortDesc" : {
+          "type" : "string",
+          "description" : "A brief statement about the user"
+        }
+      },
+      "example" : {
+        "firstname" : "firstname",
+        "shortDesc" : "shortDesc",
+        "fullname" : "fullname",
+        "longDesc" : "longDesc",
+        "lastname" : "lastname"
+      }
+    },
+    "User_View_Model" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "format" : "int64",
+          "description" : "Unique API-generated identifier"
+        },
+        "username" : {
+          "type" : "string",
+          "description" : "A unique, human-readable user identifier"
+        },
+        "email" : {
+          "type" : "string",
+          "format" : "email",
+          "description" : "Unique email address"
+        },
+        "firstname" : {
+          "type" : "string",
+          "description" : "Given name"
+        },
+        "lastname" : {
+          "type" : "string",
+          "description" : "Family name"
+        },
+        "fullname" : {
+          "type" : "string",
+          "description" : "Full name"
+        },
+        "fn" : {
+          "type" : "string",
+          "description" : "Alternate full name"
+        },
+        "displayname" : {
+          "type" : "string",
+          "description" : "A calculated display name based on available non-null name fields"
+        },
+        "longDesc" : {
+          "type" : "string",
+          "description" : "A paragraph about the user"
+        },
+        "shortDesc" : {
+          "type" : "string",
+          "description" : "A brief statement about the user"
+        },
+        "image" : {
+          "type" : "object",
+          "description" : "Profile image asset metadata",
+          "properties" : { }
+        }
+      },
+      "example" : {
+        "image" : "{}",
+        "firstname" : "firstname",
+        "displayname" : "displayname",
+        "fn" : "fn",
+        "shortDesc" : "shortDesc",
+        "id" : "id",
+        "fullname" : "fullname",
+        "email" : "email",
+        "longDesc" : "longDesc",
+        "username" : "username",
+        "lastname" : "lastname"
+      }
+    },
+    "body" : {
+      "type" : "object",
+      "properties" : {
+        "tracked" : {
+          "type" : "boolean"
+        }
+      }
+    },
+    "inline_response_200" : {
+      "properties" : {
+        "tracked" : {
+          "type" : "boolean"
+        },
+        "user" : {
+          "$ref" : "#/definitions/User_View_Model"
+        }
+      },
+      "example" : {
+        "tracked" : true,
+        "user" : {
+          "image" : "{}",
+          "firstname" : "firstname",
+          "displayname" : "displayname",
+          "fn" : "fn",
+          "shortDesc" : "shortDesc",
+          "id" : "id",
+          "fullname" : "fullname",
+          "email" : "email",
+          "longDesc" : "longDesc",
+          "username" : "username",
+          "lastname" : "lastname"
+        }
+      }
+    }
+  },
+  "externalDocs" : {
+    "description" : "Support",
+    "url" : "https://support.versal.com/"
+  }
+}
