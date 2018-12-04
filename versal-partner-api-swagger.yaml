@@ -143,6 +143,53 @@ paths:
           description: User not found
           schema:
             $ref: '#/definitions/Error_View_Model'
+  '/orgs/{orgId}/delete_users':
+    post:
+      tags:
+        - Users
+      summary: AddBatch remove a list of users identified by user ID from your organization
+      description: AddSee DELETE /orgs/{orgId}/users/{userId}
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: SID
+          required: true
+          type: string
+          format: uuid
+          description: API key
+        - in: path
+          name: orgId
+          required: true
+          type: integer
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/Batch_Delete_Members_Input_Model'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '401':
+          description: Invalid credentials
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '403':
+          description: Permission denied
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '404':
+          description: Permission denied
+          schema:
+            $ref: '#/definitions/Error_View_Model'
   '/orgs/{orgId}/users':
     post:
       tags:
@@ -256,6 +303,49 @@ paths:
           schema:
             $ref: '#/definitions/Error_View_Model'
   '/orgs/{orgId}/users/{userId}':
+    delete:
+      tags:
+        - Users
+      summary: Remove a user from your organization
+      description: Removes the user from organization member lists. Revokes the user's permission to interact with resources in your organization. Removes the user's enrollment records for courses in your organization. Untracks the user from course learner reporting.
+      parameters:
+        - in: header
+          name: SID
+          required: true
+          type: string
+          format: uuid
+          description: API integration key
+        - in: path
+          name: orgId
+          description: Your numeric organization ID
+          required: true
+          type: integer
+        - in: path
+          name: userId
+          required: true
+          description: The numeric user ID
+          type: integer
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '401':
+          description: Invalid credentials
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '403':
+          description: Insufficient permissions
+          schema:
+            $ref: '#/definitions/Error_View_Model'
+        '404':
+          description: Org or User not found
+          schema:
+            $ref: '#/definitions/Error_View_Model'
     put:
       tags:
         - Users
@@ -309,6 +399,13 @@ paths:
     get:
       tags:
         - Users
+      summary: List users in your organization
+      description: >-
+        The organization member listing displays users in your organization and
+        their assigned role. Users that are part of the organization but have
+        not been assigned a role are shown with an empty roles:[] record. 
+        
+        Returns a paginated result set.
       parameters:
         - in: header
           name: SID
@@ -333,13 +430,6 @@ paths:
           required: false
           description: Set page size of a paginated result set
           default: 20
-      summary: List users in your organization
-      description: >-
-        The organization member listing displays users in your organization and
-        their assigned role. Users that are part of the organization but have
-        not been assigned a role are shown with an empty roles:[] record. 
-        
-        Returns a paginated result set.
       responses:
         '200':
           description: OK
@@ -380,6 +470,15 @@ paths:
     get:
       tags:
         - Courses
+      summary: List available courses
+      description: >-
+        Lists courses available to the calling session. 
+        
+        Published course revisions are returned when the calling session does not have edit
+        rights for the course. In-edit (sandbox) course revisions are returned when the calling session
+        has edit rights for the course.
+        
+        Returns a paginated result set.
       parameters:
         - in: header
           name: SID
@@ -423,15 +522,6 @@ paths:
           required: false
           description: Set page size of a paginated result set
           default: 20
-      summary: List available courses
-      description: >-
-        Lists courses available to the calling session. 
-        
-        Published course revisions are returned when the calling session does not have edit
-        rights for the course. In-edit (sandbox) course revisions are returned when the calling session
-        has edit rights for the course.
-        
-        Returns a paginated result set.
       responses:
         '200':
           description: OK
@@ -570,10 +660,7 @@ paths:
           required: true
           description: Toggles learner tracking for the user
           schema:
-            type: object
-            properties:
-              tracked:
-                type: boolean
+            $ref: '#/definitions/User_Tracking_Input_Model'
       responses:
         '200':
           description: OK
@@ -584,7 +671,7 @@ paths:
                 type: boolean
               user:
                 $ref: '#/definitions/User_View_Model'
-        400:
+        '400':
           description: Bad request
           schema:
             $ref: '#/definitions/Error_View_Model'
@@ -621,6 +708,7 @@ paths:
           name: courseId
           required: true
           type: string
+          description: Course ID
         - in: query
           name: page
           type: integer
@@ -657,7 +745,7 @@ paths:
             perPage:
                 type: integer
                 description: The requested number of items per page
-        400:
+        '400':
           description: Bad request
           schema:
             $ref: '#/definitions/Error_View_Model'
@@ -885,6 +973,12 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/User_View_Model'
+  Batch_Delete_Members_Input_Model:
+    type: object
+    properties:
+      users:
+        type: string
+        description: List of user IDs
   Error_View_Model:
     type: object
     properties:
@@ -1152,6 +1246,12 @@ definitions:
       shortDesc:
         type: string
         description: A brief statement about the user
+  User_Tracking_Input_Model:
+    type: object
+    properties:
+      tracked:
+        type: boolean
+        description: Whether the user is tracked for the course
   User_View_Model:
     type: object
     properties:
