@@ -147,8 +147,8 @@ paths:
     post:
       tags:
         - Users
-      summary: AddBatch remove a list of users identified by user ID from your organization
-      description: AddSee DELETE /orgs/{orgId}/users/{userId}
+      summary: Batch remove a list of users identified by user ID from your organization
+      description: See DELETE /orgs/{orgId}/users/{userId}
       produces:
         - application/json
       consumes:
