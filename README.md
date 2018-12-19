@@ -2,7 +2,7 @@ Versal Partner API
 ==================
 The Versal Partner API enables organizations to manage users, courses, and performance metrics from applications built on top of the Versal Platform.
 
-To get started, try out our interactive [API demo](https://versal.com/learn/dgy8ia/lessons/1).
+To get started, try out our interactive [API demo](https://versal.com/learn/beb7mv/lessons/1).
 
 # Concepts
 ## API Keys
