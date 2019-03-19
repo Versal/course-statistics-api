@@ -23,6 +23,7 @@ Users are assigned a role within your organization.
   | admin|  Admins have full control over all of the resources within the organization. They can add and remove users from the organization, manage user roles, edit and manage courses, and view course analytics.
   | instructor|  Instructors can view any course shared with the organization, create and manage their own courses, invite learners to courses, and view course analytics.
   | learner|  Learners can enroll in any course shared with the organization.
+  | member|  Members are associated with the customer organization but have no permissions on any courses or individual orgs. These have to be explicitly granted.
 
 
 ## Versal Course Player
@@ -599,7 +600,7 @@ Returns a paginated result set.
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
-| roles | [ string ] | Accepted values: "admin", "instructor", "learner" | Yes |
+| roles | [ string ] | Accepted values: "admin", "instructor", "learner", "member" | Yes |
 | user | [User_Input_Model](#user_input_model) |  | Yes |
 
 ### Org_User_View_Model  
@@ -655,6 +656,7 @@ Returns a paginated result set.
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | tracked | boolean | Whether the user is tracked for the course |
+| roles | [ string ] | Accepted values: "learner", "author", "contributor", "publisher" |
 
 ### User_View_Model  
 
