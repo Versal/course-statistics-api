@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "The Versal Partner API enables organizations to manage users, courses, and performance metrics from applications built on top of the Versal Platform.\n# Concepts\n## API Keys\nAPI keys grant broad access to organization data on Versal. Among other operations, they can be used to:\n- create and modify organization users\n- create sessions for organization users\n- retrieve organizational courses\n- retrieve learner metrics\n\nIf your existing organization has not received an API key, please [contact Versal support](https://support.versal.com) and we will issue one. If you have not yet registered with Versal, [sign up for a free trial](https://versal.com/trial/business) to receive your API key.\n## User Sessions\nUser sessions grant a single user restricted access to organization resources. They can be used to retrieve, launch, and consume content using the Versal Course Player.\n## User Roles\nUsers are assigned a role within your organization.\n\n  | Role        | Description           | \n  | ------------- |---------------| \n  | admin|  Admins have full control over all of the resources within the organization. They can add and remove users from the organization, manage user roles, edit and manage courses, and view course analytics.\n  | instructor|  Instructors can view any course shared with the organization, create and manage their own courses, invite learners to courses, and view course analytics.\n  | learner|  Learners can enroll in any course shared with the organization.\n\n\n## Versal Course Player\nThe Versal Course Player is a browser-based runtime for Versal course content. An overview of its usage and API is available [here](https://support.versal.com/hc/en-us/articles/203271866-Embedding-organizational-courses).\n# Topics\n## Requests\nAll requests and responses reference the Versal Partner API available at: https://stack.versal.com/api2. Requests must be made over HTTPS; requests over standard HTTP will be redirected to the corresponding HTTPS endpoint.\n## Authentication\nAll requests to the Versal API must include an SID header with a valid API key or user session ID. If your organization has not received an API key, please please [contact Versal support](https://support.versal.com) and we will issue one.\n\n``` curl -H 'SID: YOUR_API_KEY' https://stack.versal.com/api2/courses/123  ```\n## Pagination\nAll responses for collections of resources return a subset of the collection and an X-Pagination header describing the total volume of resources available. The body of the header is a JSON object containing pagination information:\n\n``` X-Pagination: {\"count\":3737,\"page\":1,\"nextPage\":2,\"perPage\":20,\"pageCount\":187} ```\n\nSubsequent pages from the collection endpoint may be retrieved by setting the page query parameter:\n``` curl https://stack.versal.com/api2/courses/123/userdata?page=2 -H 'SID: YOUR_API_KEY' ```",
+    "description": "The Versal Partner API enables organizations to manage users, courses, and performance metrics from applications built on top of the Versal Platform.\n# Concepts\n## API Keys\nAPI keys grant broad access to organization data on Versal. Among other operations, they can be used to:\n- create and modify organization users\n- create sessions for organization users\n- retrieve organizational courses\n- retrieve learner metrics\n\nIf your existing organization has not received an API key, please [contact Versal support](https://support.versal.com) and we will issue one. If you have not yet registered with Versal, [sign up for a free trial](https://versal.com/trial/business) to receive your API key.\n## User Sessions\nUser sessions grant a single user restricted access to organization resources. They can be used to retrieve, launch, and consume content using the Versal Course Player.\n## User Org Roles\nUsers are assigned a role within your organization.\n\n  | Role        | Description           | \n  | ------------- |---------------| \n  | admin|  Admins have full control over all of the resources within the organization. They can add and remove users from the organization, manage user roles, edit and manage courses, and view course analytics.\n  | instructor|  Instructors can view any course shared with the organization, create and manage their own courses, invite learners to courses, and view course analytics.\n  | learner|  Learners can enroll in any course shared with the organization.\n  | member|  Members are associated with the customer organization but have no permissions on any courses or individual orgs. These have to be explicitly granted.\n\n## User Course Roles\nUsers can be assigned a role on a course.\nPlease note that org roles take precedence over course roles\n\n  | Role        | Description           | \n  | ------------- |---------------| \n  | author/contributor|  Authors or contributors can edit the course.\n  | learner|  Learners can learn the course.\n  | publisher|  Publishers can publish newer revisions of the course - all learners only see the latest revision.\n\n## Versal Course Player\nThe Versal Course Player is a browser-based runtime for Versal course content. An overview of its usage and API is available [here](https://support.versal.com/hc/en-us/articles/203271866-Embedding-organizational-courses).\n# Topics\n## Requests\nAll requests and responses reference the Versal Partner API available at: https://stack.versal.com/api2. Requests must be made over HTTPS; requests over standard HTTP will be redirected to the corresponding HTTPS endpoint.\n## Authentication\nAll requests to the Versal API must include an SID header with a valid API key or user session ID. If your organization has not received an API key, please please [contact Versal support](https://support.versal.com) and we will issue one.\n\n``` curl -H 'SID: YOUR_API_KEY' https://stack.versal.com/api2/courses/123  ```\n## Pagination\nAll responses for collections of resources return a subset of the collection and an X-Pagination header describing the total volume of resources available. The body of the header is a JSON object containing pagination information:\n\n``` X-Pagination: {\"count\":3737,\"page\":1,\"nextPage\":2,\"perPage\":20,\"pageCount\":187} ```\n\nSubsequent pages from the collection endpoint may be retrieved by setting the page query parameter:\n``` curl https://stack.versal.com/api2/courses/123/userdata?page=2 -H 'SID: YOUR_API_KEY' ```",
     "version": "1.0",
     "title": "Versal Partner API",
     "termsOfService": "https://versal.com/terms"
@@ -1498,7 +1498,8 @@
             "enum": [
               "admin",
               "instructor",
-              "learner"
+              "learner",
+              "member"
             ]
           }
         },
@@ -1631,6 +1632,18 @@
         "tracked": {
           "type": "boolean",
           "description": "Whether the user is tracked for the course"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "learner",
+              "author",
+              "contributor",
+              "publisher"
+            ]
+          }
         }
       }
     },

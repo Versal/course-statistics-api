@@ -25,7 +25,7 @@ info:
     
     User sessions grant a single user restricted access to organization resources. They can be used to retrieve, launch, and consume content using the Versal Course Player.
 
-    ## User Roles
+    ## User Org Roles
     
     Users are assigned a role within your organization.
     
@@ -34,7 +34,19 @@ info:
       | admin|  Admins have full control over all of the resources within the organization. They can add and remove users from the organization, manage user roles, edit and manage courses, and view course analytics.
       | instructor|  Instructors can view any course shared with the organization, create and manage their own courses, invite learners to courses, and view course analytics.
       | learner|  Learners can enroll in any course shared with the organization.
+      | member|  Members are associated with the customer organization but have no permissions on any courses or individual orgs. These have to be explicitly granted.
 
+    ## User Course Roles
+    
+    Users can be assigned a role on a course.
+    
+    Please note that org roles take precedence over course roles
+    
+      | Role        | Description           | 
+      | ------------- |---------------| 
+      | author/contributor|  Authors or contributors can edit the course.
+      | learner|  Learners can learn the course.
+      | publisher|  Publishers can publish newer revisions of the course - all learners only see the latest revision.
 
     ## Versal Course Player
     
@@ -1160,6 +1172,7 @@ definitions:
             - admin
             - instructor
             - learner
+            - member
       user:
         $ref: '#/definitions/User_Input_Model'
   Org_User_View_Model:
@@ -1252,6 +1265,15 @@ definitions:
       tracked:
         type: boolean
         description: Whether the user is tracked for the course
+      roles:
+        type: array
+        items:
+          type: string
+          enum:
+            - learner
+            - author
+            - contributor
+            - publisher
   User_View_Model:
     type: object
     properties:
