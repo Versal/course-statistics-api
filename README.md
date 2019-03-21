@@ -15,7 +15,7 @@ API keys grant broad access to organization data on Versal. Among other operatio
 If your existing organization has not received an API key, please [contact Versal support](https://support.versal.com) and we will issue one. If you have not yet registered with Versal, [sign up for a free trial](https://versal.com/trial/business) to receive your API key.
 ## User Sessions
 User sessions grant a single user restricted access to organization resources. They can be used to retrieve, launch, and consume content using the Versal Course Player.
-## User Roles
+## User Org Roles
 Users are assigned a role within your organization.
 
   | Role        | Description           | 
@@ -24,8 +24,16 @@ Users are assigned a role within your organization.
   | instructor|  Instructors can view any course shared with the organization, create and manage their own courses, invite learners to courses, and view course analytics.
   | learner|  Learners can enroll in any course shared with the organization.
   | member|  Members are associated with the customer organization but have no permissions on any courses or individual orgs. These have to be explicitly granted.
+## User Course Roles
+Users can be assigned a role on a course.
 
+_Please note that org roles take precedence over course roles_
 
+  | Role        | Description           | 
+  | ------------- |---------------| 
+  | author/contributor|  Authors or contributors can edit the course.
+  | learner|  Learners can learn the course.
+  | publisher|  Publishers can publish newer revisions of the course - all learners only see the latest revision.
 ## Versal Course Player
 The Versal Course Player is a browser-based runtime for Versal course content. An overview of its usage and API is available [here](https://support.versal.com/hc/en-us/articles/203271866-Embedding-organizational-courses).
 # Topics
